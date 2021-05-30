@@ -9,7 +9,7 @@ export default createGlobalStyle`
     box-sizing: border-box;
   }
   html, body, #root{
-    min-height: 100vh;
+    min-height: 100%;
   }
   *, button, input{
     font-family: 'Roboto', sans-serif;
