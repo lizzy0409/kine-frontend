@@ -13,7 +13,7 @@ export const Container = styled.div`
   padding: 0 30px;
 `;
 
-export const Icon = styled(FiMenu)`
+export const OpenMenuIcon = styled(FiMenu)`
   font-size: 25px;
   color: #788896;
 `;
