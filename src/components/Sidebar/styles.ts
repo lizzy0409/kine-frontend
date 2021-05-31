@@ -51,10 +51,34 @@ export const Content = styled.div`
   align-items: center;
 `;
 
+export const AvatarContainer = styled.div`
+  width: 178px;
+  height: 178px;
+  position: relative;
+`;
+
 export const Avatar = styled.img`
-  width: 60%;
+  width: 100%;
+  height: 100%;
   border-radius: 50%;
   object-fit: cover;
+`;
+
+export const EditAvatarButton = styled.label`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  position: absolute;
+  right: 10px;
+  bottom: 5px;
+
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #b2acfa;
+
+  cursor: pointer;
 `;
 
 export const Name = styled.span`

@@ -11,7 +11,7 @@ const Home: React.FC = () => {
   return (
     <>
       <Sidebar open={menuOpen} setOpen={setMenuOpen} />
-      <Header setOpen={setMenuOpen} />
+      <Header setOpen={setMenuOpen} pageName={"Início"} />
       <Wrapper>
         <Container>
           <Card

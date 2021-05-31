@@ -4,16 +4,17 @@ import { Container, OpenMenuIcon, Left, Middle, Right } from "./styles";
 import GoogleLogo from "../../assets/google.png";
 
 interface HeaderProps {
+  pageName: string;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Header: React.FC<HeaderProps> = ({ setOpen }) => {
+const Header: React.FC<HeaderProps> = ({ pageName, setOpen }) => {
   return (
     <Container>
       <Left onClick={() => setOpen(true)}>
         <OpenMenuIcon /> Abrir menu
       </Left>
-      <Middle>Início</Middle>
+      <Middle>{pageName}</Middle>
       <Right src={GoogleLogo} />
     </Container>
   );

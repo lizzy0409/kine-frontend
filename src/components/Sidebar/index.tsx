@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 
-import avatar from "../../assets/pp.jpeg";
+import AvatarImage from "../../assets/pp.jpeg";
+import { MdEdit } from "react-icons/md";
 
 import {
   Container,
   CloseSidebar,
   CloseIcon,
   Content,
+  AvatarContainer,
   Avatar,
+  EditAvatarButton,
   Name,
   Menu,
   Indicator,
@@ -22,6 +25,15 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ open, setOpen }) => {
   const [activePage, setActivePage] = useState(0);
+  const [avatar, setAvatar] = useState<File | string>("");
+  const [avatarUrl, setAvatarUrl] = useState(AvatarImage);
+
+  const handleChange = (files: FileList | null) => {
+    if (files) {
+      setAvatar(files[0]);
+      setAvatarUrl(URL.createObjectURL(files[0]));
+    }
+  };
 
   return (
     <Container open={!!open}>
@@ -34,7 +46,18 @@ const Sidebar: React.FC<SidebarProps> = ({ open, setOpen }) => {
       </CloseSidebar>
 
       <Content>
-        <Avatar src={avatar} />
+        <AvatarContainer>
+          <Avatar src={avatarUrl} />
+          <EditAvatarButton htmlFor="upload">
+            <MdEdit color={"#6558F5"} fontSize={20} />
+          </EditAvatarButton>
+          <input
+            id="upload"
+            type="file"
+            onChange={(e) => handleChange(e.target.files)}
+            style={{ opacity: 0 }}
+          />
+        </AvatarContainer>
         <Name>Heitor Franco</Name>
         <Menu>
           <Indicator index={activePage} />
