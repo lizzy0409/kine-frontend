@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { FiCoffee } from "react-icons/fi";
 
+import { Link } from "react-router-dom";
+
 import { IoCloseSharp } from "react-icons/io5";
 
 interface ContainerProps {
@@ -103,10 +105,10 @@ export const Indicator = styled.div<Indicador>`
 
   transition: margin-top 0.1s;
 `;
-export const MenuItem = styled.a<MenuItemsProps>`
+export const MenuItem = styled(Link)<MenuItemsProps>`
   display: flex;
   align-items: center;
-  list-style: none;
+  text-decoration: none;
   padding: 10px;
   color: ${({ active }) => (active ? "#6558f5" : "#293845")};
   cursor: pointer;
