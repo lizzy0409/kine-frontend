@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import Sidebar from "../../components/Sidebar";
 import Table from "../../components/Table";
+import api from "../../services/api";
 
 import { Container, Section, Title } from "./styles";
 
@@ -9,26 +10,41 @@ interface IUser {
   id: string;
   name: string;
   email: string;
-  platformAccess: string;
+  awaitingApproval: boolean;
+  disapproved: boolean;
 }
 
 const ManageUsers: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [users, setUsers] = useState<IUser[]>([
-    {
-      id: "1",
-      name: "Nome do Vendedor",
-      email: "email@vendedor.com",
-      platformAccess: "Aguardando Aprovação",
-    },
+  const [usersAwaitingApproval, setUsersAwaitingApproval] = useState<IUser[]>(
+    []
+  );
+  const [registeredUsers, setRegisteredUsers] = useState<IUser[]>([]);
 
-    {
-      id: "1",
-      name: "Nome do Vendedor2",
-      email: "email@vendedor2.com",
-      platformAccess: "Aguardando Aprovação",
-    },
-  ]);
+  async function getUsers() {
+    try {
+      const { data } = await api.get("/users");
+
+      let usersAwaitingApprovalTemp: IUser[] = [];
+      let registeredUsersTemp: IUser[] = [];
+
+      data.forEach((user: IUser) => {
+        if (!user.disapproved) {
+          if (user.awaitingApproval) {
+            usersAwaitingApprovalTemp.push(user);
+          } else {
+            registeredUsersTemp.push(user);
+          }
+        }
+      });
+      setUsersAwaitingApproval(usersAwaitingApprovalTemp);
+      setRegisteredUsers(registeredUsersTemp);
+    } catch (error) {}
+  }
+
+  useEffect(() => {
+    getUsers();
+  }, []);
 
   return (
     <>
@@ -38,12 +54,21 @@ const ManageUsers: React.FC = () => {
       <Container>
         <Section>
           <Title>Usuários aguardando aprovação:</Title>
-          <Table users={users} />
+          <Table
+            users={usersAwaitingApproval}
+            setUsersAwaitingApproval={setUsersAwaitingApproval}
+            setRegisteredUsers={setRegisteredUsers}
+            usersTableAwaitingApproval
+          />
         </Section>
 
         <Section>
           <Title>Usuários Cadastrados:</Title>
-          <Table users={users} />
+          <Table
+            users={registeredUsers}
+            setUsersAwaitingApproval={setUsersAwaitingApproval}
+            setRegisteredUsers={setRegisteredUsers}
+          />
         </Section>
       </Container>
     </>

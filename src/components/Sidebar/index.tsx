@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import AvatarImage from "../../assets/pp.jpeg";
 import { MdEdit } from "react-icons/md";
@@ -17,6 +17,7 @@ import {
   MenuItem,
   Icon,
 } from "./styles";
+import api from "../../services/api";
 
 interface SidebarProps {
   open: boolean;
@@ -24,6 +25,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ open, setOpen }) => {
+  const [name, setName] = useState("");
   const [activePage, setActivePage] = useState(0);
   const [avatar, setAvatar] = useState<File | string>("");
   const [avatarUrl, setAvatarUrl] = useState(AvatarImage);
@@ -34,6 +36,22 @@ const Sidebar: React.FC<SidebarProps> = ({ open, setOpen }) => {
       setAvatarUrl(URL.createObjectURL(files[0]));
     }
   };
+
+  async function getUser() {
+    try {
+      const id = localStorage.getItem("@kine:id");
+
+      const { data } = await api.get(`/users/${id}`);
+      setAvatarUrl(data.avatarUrl);
+      setName(data.name);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    getUser();
+  }, []);
 
   return (
     <Container open={!!open}>
@@ -58,7 +76,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, setOpen }) => {
             style={{ opacity: 0 }}
           />
         </AvatarContainer>
-        <Name>Heitor Franco</Name>
+        <Name>{name}</Name>
         <Menu>
           <Indicator index={activePage} />
           <MenuItem
@@ -100,6 +118,14 @@ const Sidebar: React.FC<SidebarProps> = ({ open, setOpen }) => {
           >
             <Icon active={activePage === 4} />
             Gestão das OS's
+          </MenuItem>
+          <MenuItem
+            to="/gerenciar-usuarios"
+            active={activePage === 5}
+            onClick={() => setActivePage(5)}
+          >
+            <Icon active={activePage === 5} />
+            Gerenciar Usuários
           </MenuItem>
         </Menu>
       </Content>

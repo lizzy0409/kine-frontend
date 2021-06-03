@@ -3,6 +3,8 @@ import React, { FormEvent, useState } from "react";
 import CardForm from "../../components/CardForm";
 import AvatarImage from "../../assets/user.png";
 
+import { useHistory } from "react-router-dom";
+
 import {
   InputBlock,
   UploadContainer,
@@ -11,8 +13,10 @@ import {
   UploadText,
   Input,
 } from "./styles";
+import api from "../../services/api";
 
 const Register: React.FC = () => {
+  const history = useHistory();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,6 +34,17 @@ const Register: React.FC = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     console.log("submit");
+
+    const { data } = await api.post("/users", {
+      name,
+      email,
+      password,
+      avatarUrl,
+      awaitingApproval: true,
+    });
+    localStorage.setItem("@kine:id", data.id);
+
+    history.push("/");
   };
 
   return (
@@ -66,6 +81,7 @@ const Register: React.FC = () => {
 
         <Input
           required
+          type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => {

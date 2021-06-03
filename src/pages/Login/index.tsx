@@ -24,6 +24,7 @@ const Login: React.FC = () => {
       <InputBlock>
         <Input
           required
+          type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => {

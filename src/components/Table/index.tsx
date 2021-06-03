@@ -8,24 +8,70 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import ButtonApprove from "../ButtonApprove";
 import ButtonDisapprove from "../ButtonDisapprove";
+import ButtonRemoveUser from "../ButtonRemoveUser";
+import api from "../../services/api";
 
 interface IUser {
   id: string;
   name: string;
   email: string;
-  platformAccess: string;
+  awaitingApproval: boolean;
+  disapproved: boolean;
 }
 
 interface IMyTable {
   users: IUser[];
+  setUsersAwaitingApproval: React.Dispatch<React.SetStateAction<IUser[]>>;
+  setRegisteredUsers: React.Dispatch<React.SetStateAction<IUser[]>>;
+  usersTableAwaitingApproval?: boolean;
 }
 
-const MyTable: React.FC<IMyTable> = ({ users }) => {
-  function approveUser(id: string) {
-    console.log(`approveUser: ${id}`);
+const MyTable: React.FC<IMyTable> = ({
+  users,
+  setUsersAwaitingApproval,
+  setRegisteredUsers,
+  usersTableAwaitingApproval,
+}) => {
+  async function approveUser(id: string) {
+    api.patch(`/users/${id}`, { awaitingApproval: false });
+
+    setUsersAwaitingApproval((data) =>
+      data.filter((user: IUser) => {
+        return user.id !== id;
+      })
+    );
+
+    const { data } = await api.get(`users/${id}`);
+    const user: IUser = data;
+    setRegisteredUsers((data) => [...data, user]);
   }
-  function disapproveUser(id: string) {
-    console.log(`disapproveUser: ${id}`);
+
+  async function disapproveUser(id: string) {
+    await api.patch(`/users/${id}`, {
+      awaitingApproval: false,
+      disapproved: true,
+    });
+
+    setUsersAwaitingApproval((data) =>
+      data.filter((user: IUser) => {
+        return user.id !== id;
+      })
+    );
+  }
+  async function RemoveUser(id: string) {
+    if (!usersTableAwaitingApproval) {
+      try {
+        await api.delete(`/users/${id}`);
+
+        setRegisteredUsers((data) =>
+          data.filter((user: IUser) => {
+            return user.id !== id;
+          })
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    }
   }
   return (
     <TableContainer component={Paper} style={{ marginTop: 30 }}>
@@ -43,7 +89,7 @@ const MyTable: React.FC<IMyTable> = ({ users }) => {
                 Acesso á Plataforma
               </p>
             </TableCell>
-            <TableCell align="right">
+            <TableCell width="200px" align="right">
               <p style={{ fontWeight: 600, fontSize: 15 }}>Ações</p>
             </TableCell>
           </TableRow>
@@ -55,12 +101,26 @@ const MyTable: React.FC<IMyTable> = ({ users }) => {
                 {user.name}
               </TableCell>
               <TableCell align="left">{user.email}</TableCell>
-              <TableCell width="400px" align="left">
-                {user.platformAccess}
+              <TableCell width="300px" align="left">
+                {user.awaitingApproval ? "Aguardadando aprovação" : "Aprovado"}
               </TableCell>
-              <TableCell align="right" style={{ display: "flex" }}>
-                <ButtonDisapprove onClick={() => disapproveUser(user.id)} />
-                <ButtonApprove onClick={() => approveUser(user.id)} />
+              <TableCell
+                width="200px"
+                align="right"
+                style={{ display: "flex" }}
+              >
+                {usersTableAwaitingApproval ? (
+                  <>
+                    <ButtonDisapprove onClick={() => disapproveUser(user.id)} />
+                    <ButtonApprove onClick={() => approveUser(user.id)} />
+                  </>
+                ) : (
+                  <ButtonRemoveUser
+                    onClick={() => {
+                      RemoveUser(user.id);
+                    }}
+                  />
+                )}
               </TableCell>
             </TableRow>
           ))}
