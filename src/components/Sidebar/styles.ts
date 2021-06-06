@@ -21,6 +21,7 @@ export const Container = styled.div<ContainerProps>`
   background-color: #c3cfd9;
   position: fixed;
   left: ${({ open }) => (open ? 0 : "-300px")};
+  top: 0;
   width: 300px;
   height: 100%;
   z-index: 1;
@@ -100,10 +101,10 @@ export const Indicator = styled.div<Indicador>`
   background-color: #6558f5;
 
   position: absolute;
-  margin-top: ${({ index }) => index * 25}%;
+  top: ${({ index }) => index * 16.7}%;
   margin-left: -10px;
 
-  transition: margin-top 0.1s;
+  transition: top 0.1s;
 `;
 export const MenuItem = styled(Link)<MenuItemsProps>`
   display: flex;

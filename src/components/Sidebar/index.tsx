@@ -21,7 +21,7 @@ import api from "../../services/api";
 
 interface SidebarProps {
   open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ open, setOpen }) => {
@@ -55,13 +55,15 @@ const Sidebar: React.FC<SidebarProps> = ({ open, setOpen }) => {
 
   return (
     <Container open={!!open}>
-      <CloseSidebar
-        onClick={() => {
-          setOpen(false);
-        }}
-      >
-        Fechar Menu <CloseIcon />
-      </CloseSidebar>
+      {setOpen && (
+        <CloseSidebar
+          onClick={() => {
+            setOpen(false);
+          }}
+        >
+          Fechar Menu <CloseIcon />
+        </CloseSidebar>
+      )}
 
       <Content>
         <AvatarContainer>
