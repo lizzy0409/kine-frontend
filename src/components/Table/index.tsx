@@ -43,6 +43,7 @@ const MyTable: React.FC<IMyTable> = ({
 
     const { data } = await api.get(`users/${id}`);
     const user: IUser = data;
+    user.awaitingApproval = false;
     setRegisteredUsers((data) => [...data, user]);
   }
 
