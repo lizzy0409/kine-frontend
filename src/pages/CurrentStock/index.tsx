@@ -11,6 +11,7 @@ import { FiCoffee } from "react-icons/fi";
 
 import { Container } from "./styles";
 import CurrentStockContent from "../../components/CurrentStockContent";
+import NewPurchase from "../../components/newPurchase";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -38,29 +39,31 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    backgroundColor: theme.palette.background.paper,
-    margin: "0 auto",
-    maxWidth: "1000px",
-    width: "90%",
-    height: "calc(100vh - 40px)",
-    border: "2px solid #C3CFD9",
-    padding: 0,
-  },
-  tabs: {
-    backgroundColor: "#fff",
-    color: "#000",
-  },
-  indicator: {
-    backgroundColor: "#6558f5",
-    height: "3px",
-  },
-}));
-
 export default function SimpleTabs() {
-  const classes = useStyles();
   const [value, setValue] = React.useState(0);
+
+  const useStyles = makeStyles((theme: Theme) => ({
+    root: {
+      backgroundColor: theme.palette.background.paper,
+      margin: "0 auto",
+      maxWidth: "1000px",
+      width: "90%",
+      height: value === 0 ? "calc(100vh - 40px)" : "auto",
+      maxHeight: "calc(100vh - 40px)",
+      border: "2px solid #C3CFD9",
+      padding: 0,
+    },
+    tabs: {
+      backgroundColor: "#fff",
+      color: "#000",
+    },
+    indicator: {
+      backgroundColor: "#6558f5",
+      height: "3px",
+    },
+  }));
+
+  const classes = useStyles();
 
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
@@ -105,10 +108,10 @@ export default function SimpleTabs() {
           </Tabs>
         </AppBar>
         <TabPanel value={value} index={0}>
-          <CurrentStockContent />
+          <CurrentStockContent setTabIndex={setValue} />
         </TabPanel>
         <TabPanel value={value} index={1}>
-          Item Two
+          <NewPurchase />
         </TabPanel>
       </div>
     </Container>

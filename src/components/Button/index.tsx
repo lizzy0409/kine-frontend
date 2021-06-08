@@ -6,6 +6,8 @@ interface ButtonProps {
   color: string;
   outline?: boolean;
   disable?: boolean;
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  style?: React.CSSProperties;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -13,9 +15,17 @@ const Button: React.FC<ButtonProps> = ({
   outline,
   children,
   disable,
+  onClick,
+  style,
 }) => {
   return (
-    <Container disabled={disable} color={color} outline={!!outline}>
+    <Container
+      onClick={onClick}
+      disabled={disable}
+      color={color}
+      outline={!!outline}
+      style={style}
+    >
       {children}
     </Container>
   );

@@ -1,0 +1,56 @@
+import styled from "styled-components";
+
+import { IoCloseSharp } from "react-icons/io5";
+
+export const Wrapper = styled.div`
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 2;
+
+  background-color: rgba(0, 0, 0, 0.7);
+`;
+
+export const Container = styled.div`
+  width: 100%;
+  max-width: 700px;
+
+  background-color: #fff;
+
+  border: 3px solid #c3cfd9;
+`;
+
+export const Header = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 30px;
+  border-bottom: 3px solid #9eadba;
+`;
+export const Title = styled.h1`
+  font-size: 20px;
+`;
+export const CloseIcon = styled(IoCloseSharp)`
+  color: #4b5c6b;
+  font-size: 45px;
+
+  cursor: pointer;
+`;
+
+export const Content = styled.div`
+  padding: 24px;
+`;
+
+export const ButtonsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 40px;
+`;

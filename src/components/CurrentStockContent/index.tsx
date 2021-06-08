@@ -12,7 +12,13 @@ import {
   ButtonContainer,
 } from "./styles";
 
-const CurrentStockContent = () => {
+interface CurrentStockContentProps {
+  setTabIndex: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const CurrentStockContent: React.FC<CurrentStockContentProps> = ({
+  setTabIndex,
+}) => {
   return (
     <Container>
       <ProductsTable>
@@ -20,16 +26,15 @@ const CurrentStockContent = () => {
           <Number>001</Number>
           <Name>Produto 01</Name>
           <GraphContainer>
-            <GraphContent percent={80} />
+            <GraphContent percent={90} />
           </GraphContainer>
           <ButtonContainer>
-            <Button disable={80 > 70} color={"#6558f5"}>
+            <Button disable={90 >= 85} color={"#6558f5"}>
               Comprar
             </Button>
           </ButtonContainer>
         </Product>
-      </ProductsTable>
-      <ProductsTable>
+
         <Product>
           <Number>002</Number>
           <Name>Produto 02</Name>
@@ -40,8 +45,7 @@ const CurrentStockContent = () => {
             <Button color={"#6558f5"}>Comprar</Button>
           </ButtonContainer>
         </Product>
-      </ProductsTable>
-      <ProductsTable>
+
         <Product>
           <Number>003</Number>
           <Name>Produto 03</Name>
