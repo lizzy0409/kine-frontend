@@ -13,7 +13,8 @@ export const Container = styled.button<ContainerProps>`
   font-weight: 500;
   font-size: 16px;
 
-  width: 95px;
+  padding: 0 15px;
+
   height: 40px;
   background-color: ${({ outline, color }) => (outline ? "#fff" : color)};
 

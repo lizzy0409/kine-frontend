@@ -8,6 +8,7 @@ interface ButtonProps {
   disable?: boolean;
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   style?: React.CSSProperties;
+  type?: "button" | "submit" | "reset";
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -17,6 +18,7 @@ const Button: React.FC<ButtonProps> = ({
   disable,
   onClick,
   style,
+  type,
 }) => {
   return (
     <Container
@@ -25,6 +27,7 @@ const Button: React.FC<ButtonProps> = ({
       color={color}
       outline={!!outline}
       style={style}
+      type={type}
     >
       {children}
     </Container>

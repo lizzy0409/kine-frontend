@@ -18,7 +18,7 @@ export const Wrapper = styled.div`
   background-color: rgba(0, 0, 0, 0.7);
 `;
 
-export const Container = styled.div`
+export const Container = styled.form`
   width: 100%;
   max-width: 700px;
 

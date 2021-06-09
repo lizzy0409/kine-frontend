@@ -13,13 +13,29 @@ import {
   PlusIcon,
   ButtonsContainer,
 } from "./styles";
+import MyTableExcel from "../ExcelTabel";
+
+interface ProductProps {
+  name: string;
+  value: number;
+  quantity: number;
+  unitOfMeasure: string;
+  costCenter: string;
+}
 
 const NewPurchase = () => {
   const [openModal, setOpenModal] = useState(false);
+  const [products, setProducts] = useState<ProductProps[]>([]);
+
+  function addProduct(product: ProductProps) {
+    setProducts([...products, product]);
+  }
 
   return (
     <Container>
-      {openModal && <Modal setOpenModal={setOpenModal} />}
+      {openModal && (
+        <Modal addProduct={addProduct} setOpenModal={setOpenModal} />
+      )}
       <div>
         <Input label="Fornecedor" placeholder="Informe o Fornecedor" />
         <Input
@@ -30,9 +46,12 @@ const NewPurchase = () => {
       <ItemsPurchasedContainer>
         <Divisor />
         <Title>Itens adquiridos</Title>
-        <Text>Sem itens alocados a essa OS</Text>
+        {products.length ? (
+          <MyTableExcel data={products} setData={setProducts} />
+        ) : (
+          <Text>Sem itens alocados a essa OS</Text>
+        )}
         <Button
-          style={{ width: "auto", padding: "10px" }}
           outline
           color="#6558F5"
           onClick={() => {
@@ -43,10 +62,10 @@ const NewPurchase = () => {
         </Button>
       </ItemsPurchasedContainer>
       <ButtonsContainer>
-        <Button style={{ width: 110 }} outline color="#6558F5">
+        <Button outline color="#6558F5">
           Cancelar
         </Button>
-        <Button style={{ width: 110 }} color="#1AAE9F">
+        <Button style={{ padding: "0 35px" }} color="#1AAE9F">
           Salvar
         </Button>
       </ButtonsContainer>

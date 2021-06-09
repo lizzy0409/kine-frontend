@@ -3,6 +3,7 @@ import { FaTrashAlt } from "react-icons/fa";
 
 export const Button = styled.div`
   cursor: pointer;
+  display: inline-flex;
 `;
 
 export const TrashIcon = styled(FaTrashAlt)`

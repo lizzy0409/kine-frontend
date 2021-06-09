@@ -11,6 +11,7 @@ export const Button = styled.div`
   align-items: center;
   margin-left: 10px;
   cursor: pointer;
+  display: inline-flex;
 `;
 
 export const CheckIcon = styled(BsCheck)`

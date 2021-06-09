@@ -1,12 +1,11 @@
 import styled from "styled-components";
-import { IoCloseSharp } from "react-icons/io5";
+import { MdEdit } from "react-icons/md";
 
 export const Button = styled.div`
   width: 35px;
   height: 35px;
   border-radius: 50%;
-  background-color: #eb4740;
-  display: flex;
+  background-color: #f1c40f;
   justify-content: center;
   align-items: center;
   margin-left: 10px;
@@ -14,7 +13,7 @@ export const Button = styled.div`
   display: inline-flex;
 `;
 
-export const CloseIcon = styled(IoCloseSharp)`
+export const EditIcon = styled(MdEdit)`
   font-size: 19px;
   fill: #fff;
 `;
