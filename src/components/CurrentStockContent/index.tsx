@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import api from "../../services/api";
 import Button from "../Button";
 
 import {
@@ -12,50 +13,74 @@ import {
   ButtonContainer,
 } from "./styles";
 
+interface ProductProps {
+  id: string;
+  name: string;
+  value: number;
+  quantity: number;
+  unitOfMeasure: string;
+  costCenter: string;
+  stockLimit: number;
+}
+
 interface CurrentStockContentProps {
-  setTabIndex: React.Dispatch<React.SetStateAction<number>>;
+  changeValue: (value: number) => void;
+  setPreData: React.Dispatch<React.SetStateAction<ProductProps | undefined>>;
 }
 
 const CurrentStockContent: React.FC<CurrentStockContentProps> = ({
-  setTabIndex,
+  changeValue,
+  setPreData,
 }) => {
+  const [products, setProducts] = useState<ProductProps[]>();
+
+  async function getProducts() {
+    try {
+      const { data } = await api.get("/products");
+
+      setProducts(data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  function getPercent(value: number, max: number) {
+    return (value / max) * 100;
+  }
+
+  useEffect(() => {
+    getProducts();
+  }, []);
+
   return (
     <Container>
       <ProductsTable>
-        <Product>
-          <Number>001</Number>
-          <Name>Produto 01</Name>
-          <GraphContainer>
-            <GraphContent percent={90} />
-          </GraphContainer>
-          <ButtonContainer>
-            <Button disable={90 >= 85} color={"#6558f5"}>
-              Comprar
-            </Button>
-          </ButtonContainer>
-        </Product>
-
-        <Product>
-          <Number>002</Number>
-          <Name>Produto 02</Name>
-          <GraphContainer>
-            <GraphContent percent={40} />
-          </GraphContainer>
-          <ButtonContainer>
-            <Button color={"#6558f5"}>Comprar</Button>
-          </ButtonContainer>
-        </Product>
-
-        <Product>
-          <Number>003</Number>
-          <Name>Produto 03</Name>
-          <GraphContainer>
-            <GraphContent percent={25} />
-          </GraphContainer>
-          <ButtonContainer>
-            <Button color={"#6558f5"}>Comprar</Button>
-          </ButtonContainer>
-        </Product>
+        {products &&
+          products.map((product, index) => (
+            <Product>
+              <Number>{(index + 1).toString().padStart(3, "0")}</Number>
+              <Name>{product.name}</Name>
+              <GraphContainer>
+                <GraphContent
+                  percent={getPercent(product.quantity, product.stockLimit)}
+                />
+              </GraphContainer>
+              <ButtonContainer>
+                <Button
+                  onClick={() => {
+                    setPreData(product);
+                    changeValue(1);
+                  }}
+                  disable={
+                    getPercent(product.quantity, product.stockLimit) >= 85
+                  }
+                  color={"#6558f5"}
+                >
+                  Comprar
+                </Button>
+              </ButtonContainer>
+            </Product>
+          ))}
       </ProductsTable>
     </Container>
   );

@@ -11,6 +11,7 @@ import ButtonEdit from "../ButtonEdit";
 import ButtonRemoveProduct from "../ButtonRemoveProduct";
 
 interface IData {
+  id: string;
   name: string;
   value: number;
   quantity: number;
@@ -20,14 +21,15 @@ interface IData {
 
 interface IMyTableExcel {
   data: IData[];
-  setData: React.Dispatch<React.SetStateAction<IData[]>>;
+  removeProduct: (product: IData) => void;
+  OpenEditModal: (product: IData) => void;
 }
 
-const MyTableExcel: React.FC<IMyTableExcel> = ({ data, setData }) => {
-  function RemoveProduct(product: IData) {
-    setData((data) => data.filter((item) => item !== product));
-  }
-
+const MyTableExcel: React.FC<IMyTableExcel> = ({
+  data,
+  removeProduct,
+  OpenEditModal,
+}) => {
   return (
     <TableContainer component={Paper}>
       <Table size="small" aria-label="a dense table">
@@ -52,16 +54,18 @@ const MyTableExcel: React.FC<IMyTableExcel> = ({ data, setData }) => {
         </TableHead>
         <TableBody>
           {data.map((item) => (
-            <TableRow key={item.name}>
+            <TableRow key={item.id}>
               <TableCell component="th" scope="row">
                 {item.name}
               </TableCell>
-              <TableCell align="left">{item.value}</TableCell>
+              <TableCell align="left">R$ {item.value}</TableCell>
               <TableCell align="left">{item.quantity}</TableCell>
-              <TableCell align="left">{item.quantity * item.value}</TableCell>
-              <TableCell width="150px" align="right">
-                <ButtonEdit />
-                <ButtonRemoveProduct onClick={() => RemoveProduct(item)} />
+              <TableCell align="left">
+                R$ {item.quantity * item.value}
+              </TableCell>
+              <TableCell align="right">
+                <ButtonEdit onClick={() => OpenEditModal(item)} />
+                <ButtonRemoveProduct onClick={() => removeProduct(item)} />
               </TableCell>
             </TableRow>
           ))}

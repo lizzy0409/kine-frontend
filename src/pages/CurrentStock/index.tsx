@@ -18,6 +18,15 @@ interface TabPanelProps {
   index: any;
   value: any;
 }
+interface ProductProps {
+  id: string;
+  name: string;
+  value: number;
+  quantity: number;
+  unitOfMeasure: string;
+  costCenter: string;
+  stockLimit: number;
+}
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -41,6 +50,7 @@ function TabPanel(props: TabPanelProps) {
 
 export default function SimpleTabs() {
   const [value, setValue] = React.useState(0);
+  const [preData, setPreData] = React.useState<ProductProps>();
 
   const useStyles = makeStyles((theme: Theme) => ({
     root: {
@@ -68,6 +78,10 @@ export default function SimpleTabs() {
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setValue(newValue);
   };
+
+  function changeValue(value: number) {
+    setValue(value);
+  }
 
   return (
     <Container>
@@ -108,10 +122,13 @@ export default function SimpleTabs() {
           </Tabs>
         </AppBar>
         <TabPanel value={value} index={0}>
-          <CurrentStockContent setTabIndex={setValue} />
+          <CurrentStockContent
+            setPreData={setPreData}
+            changeValue={changeValue}
+          />
         </TabPanel>
         <TabPanel value={value} index={1}>
-          <NewPurchase />
+          <NewPurchase preData={preData} changeValue={changeValue} />
         </TabPanel>
       </div>
     </Container>

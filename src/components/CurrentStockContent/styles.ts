@@ -33,7 +33,7 @@ export const GraphContainer = styled.div`
 export const GraphContent = styled.div<GraphProps>`
   width: ${({ percent }) => percent}%;
   height: 100%;
-  border-radius: 5px 0 0 5px;
+  border-radius: ${({ percent }) => (percent === 100 ? "5px" : "5px 0 0 5px")};
   background-color: ${({ percent }) => {
     if (percent >= 30 && percent <= 50) {
       return "#F7C325";
