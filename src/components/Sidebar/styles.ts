@@ -96,6 +96,7 @@ export const Menu = styled.div`
   position: relative;
 `;
 export const Indicator = styled.div<Indicador>`
+  transition: top 0.1s;
   width: 5px;
   height: 45px;
   background-color: #6558f5;
@@ -103,8 +104,6 @@ export const Indicator = styled.div<Indicador>`
   position: absolute;
   top: ${({ index }) => index * 16.7}%;
   margin-left: -10px;
-
-  transition: top 0.1s;
 `;
 export const MenuItem = styled(Link)<MenuItemsProps>`
   display: flex;

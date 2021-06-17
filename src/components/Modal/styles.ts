@@ -3,9 +3,9 @@ import styled from "styled-components";
 import { IoCloseSharp } from "react-icons/io5";
 
 export const Wrapper = styled.div`
-  position: absolute;
-  width: 100vw;
-  height: 100vh;
+  position: fixed;
+  width: 100%;
+  height: 100%;
   top: 0;
   left: 0;
 

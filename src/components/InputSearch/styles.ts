@@ -1,20 +1,8 @@
 import styled from "styled-components";
-import InputSearch from "../InputSearch";
-
-export const InputContainer = styled.div`
-  display: grid;
-  align-items: center;
-  grid-template-columns: 1fr 2.5fr;
-  gap: 60px;
-
-  margin-bottom: 30px;
-`;
-export const Label = styled.label`
-  text-align: center;
-`;
 
 export const InputStyled = styled.input`
   height: 40px;
+  width: 100%;
 
   border: 2px solid #c5ced6;
   border-radius: 5px;

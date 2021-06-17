@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Header from "../../components/Header";
-import Sidebar from "../../components/Sidebar";
 import Table from "../../components/Table";
 import api from "../../services/api";
 
@@ -15,7 +14,6 @@ interface IUser {
 }
 
 const ManageUsers: React.FC = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
   const [usersAwaitingApproval, setUsersAwaitingApproval] = useState<IUser[]>(
     []
   );
@@ -48,8 +46,7 @@ const ManageUsers: React.FC = () => {
 
   return (
     <>
-      <Header pageName="Gerenciar Usuários" setOpen={setMenuOpen} />
-      <Sidebar open={menuOpen} setOpen={setMenuOpen} />
+      <Header pageName="Gerenciar Usuários" />
 
       <Container>
         <Section>

@@ -10,8 +10,8 @@ export const TableContainer = styled(Table).attrs((props) => ({
   min-width: 80%;
   max-width: 110%;
   margin-top: 30px;
-  border-radius: 0px;
-  margin-bottom: 20px;
+  border-radius: 0px !important;
+  margin-bottom: 20px !important;
   & th,
   td {
     border: 2px solid #c3cfd9;

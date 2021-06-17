@@ -1,17 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import Card from "../../components/Card";
 import Header from "../../components/Header";
-import Sidebar from "../../components/Sidebar";
 
 import { Wrapper, Container } from "./styles";
 
 const Home: React.FC = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
-
   return (
     <>
-      <Sidebar open={menuOpen} setOpen={setMenuOpen} />
-      <Header setOpen={setMenuOpen} pageName={"Início"} />
+      <Header pageName={"Início"} />
       <Wrapper>
         <Container>
           <Card

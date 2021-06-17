@@ -1,22 +1,27 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { makeStyles, Theme } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import Sidebar from "../../components/Sidebar";
 
 import { FiCoffee } from "react-icons/fi";
 
 import { Container } from "./styles";
 import CurrentStockContent from "../../components/CurrentStockContent";
 import NewPurchase from "../../components/newPurchase";
+import { SideBarContext } from "../../contexts/SideBarContext";
 
 interface TabPanelProps {
   children?: React.ReactNode;
   index: any;
   value: any;
+}
+
+interface Teste {
+  inputValue?: string;
+  name: string;
 }
 interface ProductProps {
   id: string;
@@ -49,7 +54,10 @@ function TabPanel(props: TabPanelProps) {
 }
 
 export default function SimpleTabs() {
-  const [value, setValue] = React.useState(0);
+  const { activePage } = useContext(SideBarContext);
+  console.log(activePage);
+
+  const [value, setValue] = React.useState(activePage === 2 ? 1 : 0);
   const [preData, setPreData] = React.useState<ProductProps>();
 
   const useStyles = makeStyles((theme: Theme) => ({
@@ -59,7 +67,6 @@ export default function SimpleTabs() {
       maxWidth: "1000px",
       width: "90%",
       height: value === 0 ? "calc(100vh - 40px)" : "auto",
-      maxHeight: "calc(100vh - 40px)",
       border: "2px solid #C3CFD9",
       padding: 0,
     },
@@ -83,9 +90,12 @@ export default function SimpleTabs() {
     setValue(value);
   }
 
+  useEffect(() => {
+    setValue(activePage === 2 ? 1 : 0);
+  }, [activePage]);
+
   return (
     <Container>
-      <Sidebar open={true} />
       <div className={classes.root}>
         <AppBar position="static">
           <Tabs

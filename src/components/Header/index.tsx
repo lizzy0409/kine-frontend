@@ -1,14 +1,15 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Container, OpenMenuIcon, Left, Middle, Right } from "./styles";
 
 import GoogleLogo from "../../assets/google.png";
+import { SideBarContext } from "../../contexts/SideBarContext";
 
 interface HeaderProps {
   pageName: string;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Header: React.FC<HeaderProps> = ({ pageName, setOpen }) => {
+const Header: React.FC<HeaderProps> = ({ pageName }) => {
+  const { setOpen } = useContext(SideBarContext);
   return (
     <Container>
       <Left onClick={() => setOpen(true)}>

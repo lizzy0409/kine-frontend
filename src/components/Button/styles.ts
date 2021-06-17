@@ -19,7 +19,7 @@ export const Container = styled.button<ContainerProps>`
   background-color: ${({ outline, color }) => (outline ? "#fff" : color)};
 
   border: ${({ outline, color }) =>
-    outline ? "2px solid rgba(101, 88, 245, 0.4)" : "none"};
+    outline ? `2px solid ${color}88` : "none"};
 
   color: ${({ outline, color }) => (outline ? color : "#fff")};
 

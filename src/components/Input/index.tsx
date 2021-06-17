@@ -1,16 +1,49 @@
 import React, { InputHTMLAttributes } from "react";
+import InputSearch from "../InputSearch";
 
 import { InputContainer, Label, InputStyled } from "./styles";
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  label: string;
+interface Teste {
+  inputValue?: string;
+  name: string;
 }
 
-const Input: React.FC<InputProps> = ({ label, ...rest }) => {
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  label: string;
+  inputSearch?: boolean;
+  data?: Teste[];
+  noAddOption?: boolean;
+  inputSearchValue?: Teste | null;
+  setValue?: React.Dispatch<React.SetStateAction<Teste | null>>;
+}
+
+const Input: React.FC<InputProps> = ({
+  label,
+  inputSearch,
+  data,
+  inputSearchValue,
+  setValue,
+  noAddOption,
+  ...rest
+}) => {
   return (
-    <InputContainer>
+    <InputContainer
+      onBlur={() => {
+        console.log("oi");
+      }}
+    >
       <Label>{label}</Label>
-      <InputStyled required {...rest} />
+      {inputSearch ? (
+        <InputSearch
+          inputSearchValue={inputSearchValue!}
+          setValue={setValue!}
+          data={data!}
+          noAddOption={noAddOption}
+          {...rest}
+        />
+      ) : (
+        <InputStyled required {...rest} />
+      )}
     </InputContainer>
   );
 };

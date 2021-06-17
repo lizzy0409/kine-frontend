@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import AvatarImage from "../../assets/pp.jpeg";
 import { MdEdit } from "react-icons/md";
@@ -18,17 +18,26 @@ import {
   Icon,
 } from "./styles";
 import api from "../../services/api";
+import { SideBarContext } from "../../contexts/SideBarContext";
+import { useLocation } from "react-router-dom";
 
-interface SidebarProps {
-  open: boolean;
-  setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
-}
+const Sidebar: React.FC = () => {
+  const arr = ["/estoque-atual", "/gestao-de-os"];
 
-const Sidebar: React.FC<SidebarProps> = ({ open, setOpen }) => {
+  const [alwaysOpen, setAlwaysOpen] = useState(false);
+  const { activePage, setActivePage } = useContext(SideBarContext);
+
   const [name, setName] = useState("");
-  const [activePage, setActivePage] = useState(0);
   const [avatar, setAvatar] = useState<File | string>("");
   const [avatarUrl, setAvatarUrl] = useState(AvatarImage);
+
+  const { open, setOpen } = useContext(SideBarContext);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    setAlwaysOpen(arr.includes(location.pathname));
+  }, [arr, location, setAlwaysOpen]);
 
   const handleChange = (files: FileList | null) => {
     if (files) {
@@ -54,8 +63,8 @@ const Sidebar: React.FC<SidebarProps> = ({ open, setOpen }) => {
   }, []);
 
   return (
-    <Container open={!!open}>
-      {setOpen && (
+    <Container open={alwaysOpen ? true : !!open}>
+      {setOpen && !alwaysOpen && (
         <CloseSidebar
           onClick={() => {
             setOpen(false);
@@ -89,16 +98,16 @@ const Sidebar: React.FC<SidebarProps> = ({ open, setOpen }) => {
             <Icon active={activePage === 0} />
             Início
           </MenuItem>
-          <MenuItem
-            to="#"
+          {/*<MenuItem
+            to="/gestao-de-os"
             active={activePage === 1}
             onClick={() => setActivePage(1)}
           >
             <Icon active={activePage === 1} />
             Nova OS
-          </MenuItem>
+          </MenuItem>*/}
           <MenuItem
-            to="#"
+            to="/estoque-atual"
             active={activePage === 2}
             onClick={() => setActivePage(2)}
           >
@@ -106,7 +115,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, setOpen }) => {
             Nova Compra
           </MenuItem>
           <MenuItem
-            to="#"
+            to="/estoque-atual"
             active={activePage === 3}
             onClick={() => setActivePage(3)}
           >
@@ -114,7 +123,7 @@ const Sidebar: React.FC<SidebarProps> = ({ open, setOpen }) => {
             Estoque Atual
           </MenuItem>
           <MenuItem
-            to="#"
+            to="/gestao-de-os"
             active={activePage === 4}
             onClick={() => setActivePage(4)}
           >

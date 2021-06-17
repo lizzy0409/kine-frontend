@@ -1,6 +1,8 @@
 import Modal from "../Modal";
 import React, { FormEvent, useEffect, useState } from "react";
 import Button from "../Button";
+import TableRow from "@material-ui/core/TableRow";
+import TableCell from "@material-ui/core/TableCell";
 
 import Input from "../Input";
 
@@ -13,9 +15,15 @@ import {
   PlusIcon,
   ButtonsContainer,
 } from "./styles";
-import MyTableExcel from "../ExcelTabel";
+import MyTableExcel from "../ExcelTable";
 import api from "../../services/api";
 import randomId from "../../utils/randomId";
+import ButtonEdit from "../ButtonEdit";
+import ButtonRemoveProduct from "../ButtonRemoveProduct";
+interface Teste {
+  inputValue?: string;
+  name: string;
+}
 
 interface ProductProps {
   id: string;
@@ -24,10 +32,6 @@ interface ProductProps {
   quantity: number;
   unitOfMeasure: string;
   costCenter: string;
-}
-
-interface IApi extends ProductProps {
-  stockLimit: number;
 }
 
 interface NewPurchaseProps {
@@ -42,20 +46,30 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
     preData ? [preData] : []
   );
 
+  const [supplier, setSupplier] = useState<Teste | null>(null);
+  const [suppliers, setSuppliers] = useState<Teste[]>([]);
+
+  const [name, setName] = useState<Teste | null>(null);
+  const [names, setNames] = useState<Teste[]>([]);
+
+  const [unitOfMeasure, setUnitOfMeasure] = useState<Teste | null>(null);
+  const [unitOfMeasures, setUnitOfMeasures] = useState<Teste[]>([]);
+
+  const [costCenter, setCostCenter] = useState<Teste | null>(null);
+  const [costCenters, setCostCenters] = useState<Teste[]>([]);
+
   const [id, setId] = useState("");
-  const [name, setName] = useState("");
+  const [totalPurchaseAmount, setTotalPurchaseAmount] = useState(0);
   const [value, setValue] = useState<number>(0);
   const [quantity, setQuantity] = useState<number>(0);
-  const [unitOfMeasure, setUnitOfMeasure] = useState("");
-  const [costCenter, setCostCenter] = useState("");
 
   function clearStates() {
     setId("");
-    setName("");
+    setName(null);
     setValue(0);
     setQuantity(0);
-    setUnitOfMeasure("");
-    setCostCenter("");
+    setUnitOfMeasure(null);
+    setCostCenter(null);
   }
 
   function addProduct(product: ProductProps) {
@@ -87,7 +101,7 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
   function OpenEditModal(product: ProductProps) {
     setOpenEditModal(true);
     setId(product.id);
-    setName(product.name);
+    setName({ name: product.name });
     setValue(product.value);
     setQuantity(product.quantity);
   }
@@ -96,11 +110,11 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
     e.preventDefault();
     const product: ProductProps = {
       id: randomId(),
-      name,
+      name: name?.name || "",
       value,
       quantity,
-      unitOfMeasure,
-      costCenter,
+      unitOfMeasure: unitOfMeasure?.name || "",
+      costCenter: costCenter?.name || "",
     };
     addProduct(product);
     setOpenModal(false);
@@ -110,11 +124,11 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
     e.preventDefault();
     const product: ProductProps = {
       id: id,
-      name,
+      name: name?.name || "",
       value,
       quantity,
-      unitOfMeasure,
-      costCenter,
+      unitOfMeasure: unitOfMeasure?.name || "",
+      costCenter: costCenter?.name || "",
     };
     editProduct(product);
     setOpenEditModal(false);
@@ -124,42 +138,28 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
     e.preventDefault();
 
     try {
-      const { data } = await api.get<IApi[]>("/products");
+      products.forEach((product) => {
+        api.post("/products", {
+          ...product,
+          stockLimit: product.quantity,
+          id: null,
+        });
+      });
+      api.post("/purchases", {
+        supplier: supplier?.name,
+        totalPurchaseAmount,
+        products,
+      });
+
+      api.post("/suppliers", { name: supplier?.name });
 
       products.forEach((product) => {
-        if (data.length) {
-          data.forEach((item) => {
-            if (item.id === product.id || item.name === product.name) {
-              let stockLimit;
-              if (item.quantity + product.quantity > item.stockLimit) {
-                stockLimit = item.quantity + product.quantity;
-              } else {
-                stockLimit = item.stockLimit;
-              }
-              api.patch(`/products/${item.id}`, {
-                name: product.name,
-                value: product.value,
-                quantity: item.quantity + product.quantity,
-                unitOfMeasure: product.unitOfMeasure,
-                costCenter: product.costCenter,
-                stockLimit,
-              });
-            } else {
-              api.post("/products", {
-                ...product,
-                stockLimit: product.quantity,
-                id: null,
-              });
-            }
-          });
-        } else {
-          api.post("/products", {
-            ...product,
-            stockLimit: product.quantity,
-            id: null,
-          });
-        }
+        api.post("/materials", { name: product.name });
+        api.post("/costCenters", { name: product.costCenter });
+        api.post("/unitOfMeasures", { name: product.unitOfMeasure });
       });
+
+      alert("Compra feita com sucesso!");
       changeValue(0);
     } catch (error) {
       console.log(error);
@@ -168,84 +168,36 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
 
   function handleCancel() {}
 
+  async function getInputSearchResults() {
+    try {
+      const { data: suppliers } = await api.get("/suppliers");
+      setSuppliers(suppliers);
+
+      const { data: materials } = await api.get("/materials");
+      setNames(materials);
+
+      const { data: unitOfMeasures } = await api.get("/unitOfMeasures");
+      setUnitOfMeasures(unitOfMeasures);
+
+      const { data: costCenters } = await api.get("/costCenters");
+      setCostCenters(costCenters);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
     if (!openModal) {
       clearStates();
     }
   }, [openModal]);
 
-  return (
-    <Container>
-      {openModal && (
-        <Modal
-          title="Cadastrar Produto"
-          handleSubmit={handleAddSubmit}
-          setOpenModal={setOpenModal}
-        >
-          <div>
-            <Input
-              label="Nome do Produto"
-              placeholder="Insira o nome do Produto"
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-              }}
-            />
-            <Input
-              label="Valor Unitário"
-              placeholder="Insira o Valor do Item"
-              type={"number"}
-              min="0"
-              value={value === 0 ? "" : value}
-              onChange={(e) => {
-                setValue(Number(e.target.value));
-              }}
-            />
-            <Input
-              label="Quantidade"
-              placeholder="Insira a Quantidade Comprada"
-              type={"number"}
-              min="0"
-              value={quantity === 0 ? "" : quantity}
-              onChange={(e) => {
-                setQuantity(Number(e.target.value));
-              }}
-            />
-            <Input
-              label="Unidade de Medida"
-              placeholder="Selecione a quantidade"
-              value={unitOfMeasure}
-              onChange={(e) => {
-                setUnitOfMeasure(e.target.value);
-              }}
-            />
-            <Input
-              label="Centro de Custo"
-              placeholder="Selecione a Categoria do Produto"
-              value={costCenter}
-              onChange={(e) => {
-                setCostCenter(e.target.value);
-              }}
-            />
-          </div>
-          <>
-            <Button
-              type="button"
-              outline
-              color="#6558F5"
-              onClick={() => {
-                setOpenModal(false);
-              }}
-            >
-              Cancelar
-            </Button>
-            <Button type="submit" style={{ width: 160 }} color="#1AAE9F">
-              Adicionar Produto
-            </Button>
-          </>
-        </Modal>
-      )}
+  useEffect(() => {
+    getInputSearchResults();
+  }, []);
 
+  return (
+    <>
       {openEditModal && (
         <Modal
           title="Editar Produto"
@@ -254,12 +206,12 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
         >
           <div>
             <Input
+              inputSearch
+              data={names}
               label="Nome do Produto"
               placeholder="Insira o nome do Produto"
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-              }}
+              inputSearchValue={name}
+              setValue={setName}
             />
             <Input
               label="Valor Unitário"
@@ -299,50 +251,149 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
           </>
         </Modal>
       )}
-
-      <div>
-        <Input label="Fornecedor" placeholder="Informe o Fornecedor" />
-        <Input
-          label="Valor Total da Compra"
-          placeholder="Informe o valor total da compra"
-          type="number"
-        />
-      </div>
-      <ItemsPurchasedContainer>
-        <Divisor />
-        <Title>Itens adquiridos</Title>
-        {products.length ? (
-          <MyTableExcel
-            OpenEditModal={OpenEditModal}
-            removeProduct={removeProduct}
-            data={products}
+      {openModal && (
+        <Modal
+          title="Cadastrar Produto"
+          handleSubmit={handleAddSubmit}
+          setOpenModal={setOpenModal}
+        >
+          <div>
+            <Input
+              inputSearch
+              data={names}
+              label="Nome do Produto"
+              placeholder="Insira o nome do Produto"
+              inputSearchValue={name}
+              setValue={setName}
+            />
+            <Input
+              label="Valor Unitário"
+              placeholder="Insira o Valor do Item"
+              type={"number"}
+              min="0"
+              value={value === 0 ? "" : value}
+              onChange={(e) => {
+                setValue(Number(e.target.value));
+              }}
+            />
+            <Input
+              label="Quantidade"
+              placeholder="Insira a Quantidade Comprada"
+              type={"number"}
+              min="0"
+              value={quantity === 0 ? "" : quantity}
+              onChange={(e) => {
+                setQuantity(Number(e.target.value));
+              }}
+            />
+            <Input
+              inputSearch
+              data={unitOfMeasures}
+              label="Unidade de Medida"
+              placeholder="Selecione a quantidade"
+              inputSearchValue={unitOfMeasure}
+              setValue={setUnitOfMeasure}
+            />
+            <Input
+              inputSearch
+              data={costCenters}
+              label="Centro de Custo"
+              placeholder="Selecione a Categoria do Produto"
+              inputSearchValue={costCenter}
+              setValue={setCostCenter}
+            />
+          </div>
+          <>
+            <Button
+              type="button"
+              outline
+              color="#6558F5"
+              onClick={() => {
+                setOpenModal(false);
+              }}
+            >
+              Cancelar
+            </Button>
+            <Button type="submit" style={{ width: 160 }} color="#1AAE9F">
+              Adicionar Produto
+            </Button>
+          </>
+        </Modal>
+      )}
+      <Container onSubmit={handlePurchaseSubmit}>
+        <div>
+          <Input
+            inputSearch
+            data={suppliers}
+            label="Fornecedor"
+            placeholder="Informe o Fornecedor"
+            inputSearchValue={supplier}
+            setValue={setSupplier}
           />
-        ) : (
-          <Text>Sem itens alocados a essa OS</Text>
-        )}
-        <Button
-          outline
-          color="#6558F5"
-          onClick={() => {
-            setOpenModal(true);
-          }}
-        >
-          <PlusIcon /> Adicionar Produtos ao Estoque
-        </Button>
-      </ItemsPurchasedContainer>
-      <ButtonsContainer>
-        <Button onClick={handleCancel} type="button" outline color="#6558F5">
-          Cancelar
-        </Button>
-        <Button
-          onClick={handlePurchaseSubmit}
-          style={{ padding: "0 35px" }}
-          color="#1AAE9F"
-        >
-          Salvar
-        </Button>
-      </ButtonsContainer>
-    </Container>
+          <Input
+            label="Valor Total da Compra"
+            placeholder="Informe o valor total da compra"
+            type="number"
+            value={totalPurchaseAmount === 0 ? "" : totalPurchaseAmount}
+            onChange={(e) => {
+              setTotalPurchaseAmount(Number(e.target.value));
+            }}
+          />
+        </div>
+        <ItemsPurchasedContainer>
+          <Divisor />
+          <Title>Itens adquiridos</Title>
+          {products.length ? (
+            <MyTableExcel
+              columns={[
+                { name: "Nome do Produto" },
+                { name: "Valor Unitário" },
+                { name: "Quantidade" },
+                { name: "Valor Total" },
+                { name: "Ações", align: "right" },
+              ]}
+            >
+              {products.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell component="th" scope="row">
+                    {item.name}
+                  </TableCell>
+                  <TableCell align="left">R$ {item.value}</TableCell>
+                  <TableCell align="left">{item.quantity}</TableCell>
+                  <TableCell align="left">
+                    R$ {item.quantity * item.value}
+                  </TableCell>
+                  <TableCell align="right">
+                    <ButtonEdit onClick={() => OpenEditModal(item)} />
+                    <ButtonRemoveProduct onClick={() => removeProduct(item)} />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </MyTableExcel>
+          ) : (
+            <Text>Sem itens alocados a essa OS</Text>
+          )}
+          <Button
+            outline
+            type="button"
+            color="#6558F5"
+            onClick={() => {
+              setOpenModal(true);
+            }}
+          >
+            <PlusIcon /> Adicionar Produtos ao Estoque
+          </Button>
+        </ItemsPurchasedContainer>
+        <ButtonsContainer>
+          <Button onClick={handleCancel} type="button" outline color="#6558F5">
+            Cancelar
+          </Button>
+          <Button style={{ padding: "0 35px" }} color="#1AAE9F">
+            Salvar
+          </Button>
+        </ButtonsContainer>
+      </Container>
+    </>
   );
 };
 

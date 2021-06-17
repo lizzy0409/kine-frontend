@@ -13,6 +13,11 @@ import {
   ButtonContainer,
 } from "./styles";
 
+interface Teste {
+  inputValue?: string;
+  name: string;
+}
+
 interface ProductProps {
   id: string;
   name: string;

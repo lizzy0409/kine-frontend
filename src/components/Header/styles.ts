@@ -11,6 +11,7 @@ export const Container = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 0 30px;
+  border-bottom: 3px solid #c3cfd9;
 `;
 
 export const OpenMenuIcon = styled(FiMenu)`

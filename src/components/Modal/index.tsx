@@ -1,6 +1,4 @@
-import React, { FormEvent, useState } from "react";
-import Button from "../Button";
-import Input from "../Input";
+import React, { FormEvent } from "react";
 
 import {
   Wrapper,
@@ -12,25 +10,24 @@ import {
   ButtonsContainer,
 } from "./styles";
 
-interface ProductProps {
-  name: string;
-  value: number;
-  quantity: number;
-  unitOfMeasure: string;
-  costCenter: string;
-}
-
 interface ModalProps {
   title: string;
   handleSubmit: (e: FormEvent) => void;
   children: React.ReactNode[];
 
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
+  style?: React.CSSProperties;
 }
 
-const Modal = ({ title, children, setOpenModal, handleSubmit }: ModalProps) => {
+const Modal = ({
+  title,
+  children,
+  setOpenModal,
+  handleSubmit,
+  style,
+}: ModalProps) => {
   return (
-    <Wrapper>
+    <Wrapper style={style}>
       <Container onSubmit={handleSubmit}>
         <Header>
           <Title>{title}</Title>

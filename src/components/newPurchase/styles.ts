@@ -1,13 +1,14 @@
 import styled from "styled-components";
 import { FiPlusCircle } from "react-icons/fi";
 
-export const Container = styled.div`
+export const Container = styled.form`
   padding: 24px;
   max-width: 800px;
   margin: 0 auto;
 `;
 
 export const ItemsPurchasedContainer = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;

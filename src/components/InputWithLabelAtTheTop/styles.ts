@@ -1,18 +1,15 @@
 import styled from "styled-components";
-import InputSearch from "../InputSearch";
 
 export const InputContainer = styled.div`
-  display: grid;
-  align-items: center;
-  grid-template-columns: 1fr 2.5fr;
-  gap: 60px;
+  display: flex;
+  flex-direction: column;
 
   margin-bottom: 30px;
 `;
-export const Label = styled.label`
-  text-align: center;
+export const Label = styled.h1`
+  font-size: 16px;
+  color: #4b5c6b;
 `;
-
 export const InputStyled = styled.input`
   height: 40px;
 
@@ -26,10 +23,6 @@ export const InputStyled = styled.input`
 
   &::placeholder {
     color: #c3cfd9;
-    font-size: 17px;
+    font-size: 15px;
   }
-  &:focus {
-    border-color: #6558f5;
-  }
-  outline: none;
 `;
