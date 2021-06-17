@@ -135,6 +135,7 @@ const SoManagement = () => {
 
     setOpenServiceOrderRegistrationModal(false);
     getSO();
+    getInputSearchResults();
   }
 
   async function getSO() {
