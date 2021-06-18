@@ -51,6 +51,7 @@ interface ProductProps {
 interface MaterialsProps {
   name: string;
   quantity: number;
+  value: number;
 }
 
 interface Teste {
@@ -185,23 +186,41 @@ const SoManagement = () => {
     }
   }
 
-  function handleAddMaterialToAnSoModal(e: FormEvent) {
+  async function handleAddMaterialToAnSoModal(e: FormEvent) {
     e.preventDefault();
-    if (addMaterialAndClose) {
-      setMaterials([...materials, { name: product!.name, quantity }]);
-      setOpenAddMaterialToAnSoModal(false);
-    } else {
-      setMaterials([...materials, { name: product!.name, quantity }]);
-      setProduct(null);
-      setQuantity(0);
-      setOpenAddMaterialToAnSoModal(true);
+    try {
+      const { data } = await api.get(`/products?name=${product!.name}`);
+
+      if (addMaterialAndClose) {
+        setMaterials([
+          ...materials,
+          { name: product!.name, quantity, value: data[0].value },
+        ]);
+        setOpenAddMaterialToAnSoModal(false);
+      } else {
+        setMaterials([
+          ...materials,
+          { name: product!.name, quantity, value: data[0].value },
+        ]);
+        setProduct(null);
+        setQuantity(0);
+        setOpenAddMaterialToAnSoModal(true);
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 
   async function getInputSearchResults() {
     try {
-      const { data } = await api.get("/materials");
-      setMaterialsInStock(data);
+      const { data } = await api.get<ProductProps[]>("/products");
+
+      let parsedData: Teste[] = [];
+
+      data.forEach((product) => {
+        parsedData.push({ name: product.name });
+      });
+      setMaterialsInStock(parsedData);
 
       const { data: clients } = await api.get("/clients");
       setClients(clients);
