@@ -14,7 +14,7 @@ export const UploadContainer = styled.div`
   align-self: center;
 `;
 
-export const UploadImage = styled.label`
+export const UploadImage = styled.input`
   width: 100%;
   height: 100%;
   border-radius: 50%;

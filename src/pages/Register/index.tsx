@@ -57,16 +57,16 @@ const Register: React.FC = () => {
     >
       <InputBlock>
         <UploadContainer>
-          <UploadImage htmlFor="upload" />
+          <UploadImage
+            type="file"
+            style={{ opacity: 0 }}
+            onChange={(e) => {
+              handleChange(e.target.files);
+            }}
+          />
           <PreviewImage src={avatarUrl} />
         </UploadContainer>
         <UploadText>Clique para alterar seu avatar</UploadText>
-        <input
-          id="upload"
-          type="file"
-          onChange={(e) => handleChange(e.target.files)}
-          style={{ opacity: 0 }}
-        />
 
         <Input
           required
