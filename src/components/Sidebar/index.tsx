@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 
-import AvatarImage from "../../assets/pp.jpeg";
+import AvatarImage from "../../assets/user.png";
+
 import { MdEdit } from "react-icons/md";
 
 import {
