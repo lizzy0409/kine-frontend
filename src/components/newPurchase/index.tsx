@@ -166,7 +166,11 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
     }
   }
 
-  function handleCancel() {}
+  function handleCancel() {
+    setSupplier(null);
+    setTotalPurchaseAmount(0);
+    setProducts([]);
+  }
 
   async function getInputSearchResults() {
     try {
