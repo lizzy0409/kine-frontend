@@ -66,6 +66,9 @@ interface Teste {
 }
 
 const SoManagement = () => {
+  const [modalAddEditableMaterial, setModalAddEditableMaterial] =
+    useState(false);
+
   const [SORunning, setSORunning] = useState<SOProps[]>([]);
   const [SOCompleted, setSOCompleted] = useState<SOProps[]>([]);
   const [SOClosed, setSOClosed] = useState<SOProps[]>([]);
@@ -200,27 +203,54 @@ const SoManagement = () => {
 
   async function handleAddMaterialToAnSoModal(e: FormEvent) {
     e.preventDefault();
-    try {
-      const { data } = await api.get(`/products?name=${product!.name}`);
+    if (modalAddEditableMaterial) {
+      try {
+        const { data: so } = await api.get(`/so?SONumber=${SONumber}`);
+        const { data: productData } = await api.get(
+          `/products?name=${product!.name}`
+        );
 
-      if (addMaterialAndClose) {
-        setMaterials([
-          ...materials,
-          { name: product!.name, quantity, value: data[0].value },
-        ]);
-        setOpenAddMaterialToAnSoModal(false);
-      } else {
-        setMaterials([
-          ...materials,
-          { name: product!.name, quantity, value: data[0].value },
-        ]);
-        setProduct(null);
-        setQuantity(0);
-        setOpenAddMaterialToAnSoModal(true);
+        await api.patch(`so/${so[0].id}`, {
+          materials: [
+            ...so[0].materials,
+            { name: product!.name, quantity, value: productData[0].value },
+          ],
+        });
+        if (addMaterialAndClose) {
+          setOpenAddMaterialToAnSoModal(false);
+        } else {
+          setProduct(null);
+          setQuantity(0);
+          setOpenAddMaterialToAnSoModal(true);
+        }
+        alert("Material alocado");
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
+    } else {
+      try {
+        const { data } = await api.get(`/products?name=${product!.name}`);
+
+        if (addMaterialAndClose) {
+          setMaterials([
+            ...materials,
+            { name: product!.name, quantity, value: data[0].value },
+          ]);
+          setOpenAddMaterialToAnSoModal(false);
+        } else {
+          setMaterials([
+            ...materials,
+            { name: product!.name, quantity, value: data[0].value },
+          ]);
+          setProduct(null);
+          setQuantity(0);
+          setOpenAddMaterialToAnSoModal(true);
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
+    setModalAddEditableMaterial(false);
   }
 
   async function getInputSearchResults() {
@@ -272,6 +302,8 @@ const SoManagement = () => {
     setSONumber(so.SONumber);
     setClient({ name: so.client });
     setOpenReturnAMaterialFromAnOsModal(true);
+    setModalAddEditableMaterial(true);
+
     try {
       const { data } = await api.get(`/so/${so.id}`);
       setMaterialsInSO(data.materials);
@@ -283,6 +315,7 @@ const SoManagement = () => {
   function openAddAMaterialFromAnOs(so: SOProps) {
     setSONumber(so.SONumber);
     setClient({ name: so.client });
+    setModalAddEditableMaterial(true);
     setOpenAddMaterialToAnSoModal(true);
   }
 
@@ -321,6 +354,12 @@ const SoManagement = () => {
       clearInputs();
     }
   }, [openServiceOrderRegistrationModal]);
+
+  useEffect(() => {
+    if (!openAddMaterialToAnSoModal) {
+      setModalAddEditableMaterial(false);
+    }
+  }, [openAddMaterialToAnSoModal]);
 
   return (
     <Container>
