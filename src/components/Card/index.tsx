@@ -6,11 +6,12 @@ interface CardProps {
   title: string;
   text: string;
   icon: string;
+  onClick?: () => void;
 }
 
-const Card: React.FC<CardProps> = ({ title, text, icon }) => {
+const Card: React.FC<CardProps> = ({ title, text, icon, onClick }) => {
   return (
-    <Container>
+    <Container onClick={onClick}>
       <Title>{title}</Title>
       <Text>{text}</Text>
       <IconContainer>

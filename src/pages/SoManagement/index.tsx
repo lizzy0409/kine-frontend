@@ -26,6 +26,7 @@ import { FiCoffee } from "react-icons/fi";
 import Modal from "../../components/Modal";
 import Input from "../../components/Input";
 import api from "../../services/api";
+import formatDate from "../../utils/formatDate";
 
 interface SOProps {
   id: string;
@@ -64,16 +65,7 @@ const SoManagement = () => {
   const [SOCompleted, setSOCompleted] = useState<SOProps[]>([]);
   const [SOClosed, setSOClosed] = useState<SOProps[]>([]);
 
-  const [products, setProducts] = useState<ProductProps[]>([
-    {
-      id: "1",
-      name: "x",
-      value: 10,
-      quantity: 192,
-      unitOfMeasure: "x",
-      costCenter: "x",
-    },
-  ]);
+  const [products, setProducts] = useState<ProductProps[]>([]);
 
   const [client, setClient] = useState<Teste | null>(null);
   const [clients, setClients] = useState<Teste[]>([]);
@@ -100,17 +92,30 @@ const SoManagement = () => {
   const [openEndAnOsModal, setOpenEndAnOsModal] = useState(false);
   const [openOsDetailsModal, setOpenOsDetailsModal] = useState(false);
 
-  const [SONumber, setSONumber] = useState(0);
+  const [SONumber, setSONumber] = useState<string>("");
   const [product, setProduct] = useState<Teste | null>(null);
   const [quantity, setQuantity] = useState(0);
   const [manpower, setManpower] = useState(0);
   const [displacement, setDisplacement] = useState(0);
+  const [openingDate, setOpeningDate] = useState<Date>(new Date());
+  const [closingDate, setClosingDate] = useState<Date>(new Date());
 
   const [materials, setMaterials] = useState<MaterialsProps[]>([]);
 
   const [materialsInStock, setMaterialsInStock] = useState<Teste[]>([]);
+  const [materialsInSO, setMaterialsInSO] = useState<Teste[]>([]);
 
   const [addMaterialAndClose, setAddMaterialAndClose] = useState(false);
+
+  function clearInputs() {
+    setSONumber("");
+    setClient(null);
+    setSeller(null);
+    setResponsibleTechnician(null);
+    setMaterials([]);
+    setProduct(null);
+    setQuantity(0);
+  }
 
   function handleServiceOrderRegistration(e: FormEvent) {
     e.preventDefault();
@@ -137,6 +142,8 @@ const SoManagement = () => {
     setOpenServiceOrderRegistrationModal(false);
     getSO();
     getInputSearchResults();
+    clearInputs();
+    alert("Cadastro de OS feita com sucesso!");
   }
 
   async function getSO() {
@@ -179,7 +186,7 @@ const SoManagement = () => {
   }
 
   function addMaterialToAnOs() {
-    if (SONumber !== 0 && client) {
+    if (SONumber !== "" && client) {
       setOpenAddMaterialToAnSoModal(true);
     } else {
       alert("Preencha todos os dados antes de adicionar um material!");
@@ -237,6 +244,63 @@ const SoManagement = () => {
     }
   }
 
+  async function handleEndAnOSSubmit(e: FormEvent) {
+    e.preventDefault();
+    try {
+      const { data } = await api.get(`/so?SONumber=${SONumber}`);
+      await api.patch(`/so/${data[0].id}`, {
+        manpower,
+        displacement,
+        running: false,
+        completed: false,
+        closed: true,
+      });
+      setOpenEndAnOsModal(false);
+      clearInputs();
+      getSO();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function openReturnAMaterialFromAnOs(so: SOProps) {
+    setSONumber(so.SONumber);
+    setClient({ name: so.client });
+    setOpenReturnAMaterialFromAnOsModal(true);
+    try {
+      const { data } = await api.get(`/so/${so.id}`);
+      setMaterialsInSO(data.materials);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  function openAddAMaterialFromAnOs(so: SOProps) {
+    setSONumber(so.SONumber);
+    setClient({ name: so.client });
+    setOpenAddMaterialToAnSoModal(true);
+  }
+
+  function openEndAnOs(so: SOProps) {
+    setSONumber(so.SONumber);
+    setClient({ name: so.client });
+    setOpenEndAnOsModal(true);
+  }
+
+  async function openOsDetails(so: SOProps) {
+    const { data } = await api.get(`/so/${so.id}`);
+    setProducts(data.materials);
+    setOpeningDate(data.openingDate);
+    setClosingDate(data.closingDate);
+    setSONumber(data.SONumber);
+    setClient({ name: data.client });
+    setResponsibleTechnician({ name: data.responsibleTechnician });
+    setSeller({ name: data.seller });
+    setManpower(data.manpower);
+    setDisplacement(data.displacement);
+    setOpenOsDetailsModal(true);
+  }
+
   useEffect(() => {
     setProduct(null);
     setQuantity(0);
@@ -246,6 +310,12 @@ const SoManagement = () => {
     getSO();
     getInputSearchResults();
   }, []);
+
+  useEffect(() => {
+    if (openServiceOrderRegistrationModal) {
+      clearInputs();
+    }
+  }, [openServiceOrderRegistrationModal]);
 
   return (
     <Container>
@@ -260,11 +330,11 @@ const SoManagement = () => {
             <Input
               label="Número da OS"
               placeholder="Insira o número da OS"
+              value={SONumber}
               type="number"
-              value={SONumber === 0 ? "" : SONumber}
               min="0"
               onChange={(e) => {
-                setSONumber(Number(e.target.value));
+                setSONumber(e.target.value);
               }}
             />
             <Input
@@ -409,7 +479,7 @@ const SoManagement = () => {
                   setAddMaterialAndClose(true);
                 }}
               >
-                Criar OS
+                Salvar
               </Button>
             </div>
           </>
@@ -423,16 +493,12 @@ const SoManagement = () => {
           setOpenModal={setOpenReturnAMaterialFromAnOsModal}
         >
           <div>
-            <Input label="Número da OS" disabled={true} value="100101" />
-            <Input
-              label="Cliente"
-              disabled={true}
-              value="Shoppping Maringá Park"
-            />
+            <Input label="Número da OS" disabled={true} value={SONumber} />
+            <Input label="Cliente" disabled={true} value={client?.name} />
             <Input
               inputSearch
               noAddOption
-              data={materialsInStock}
+              data={materialsInSO}
               label="Produto"
               placeholder="Ex: Mangueira, Parafuso, Suporte, etc..."
               inputSearchValue={product}
@@ -465,7 +531,7 @@ const SoManagement = () => {
                 Salvar e Adicionar Mais itens
               </Button>
               <Button style={{ marginLeft: 20 }} type="submit" color="#1AAE9F">
-                Criar OS
+                Salvar
               </Button>
             </div>
           </>
@@ -475,16 +541,12 @@ const SoManagement = () => {
       {openEndAnOsModal && (
         <Modal
           title="Encerrar uma OS"
-          handleSubmit={handleServiceOrderRegistration}
+          handleSubmit={handleEndAnOSSubmit}
           setOpenModal={setOpenEndAnOsModal}
         >
           <div>
-            <Input label="Número da OS" disabled={true} value="100101" />
-            <Input
-              label="Cliente"
-              disabled={true}
-              value="Shoppping Maringá Park"
-            />
+            <Input label="Número da OS" disabled={true} value={SONumber} />
+            <Input label="Cliente" disabled={true} value={client?.name} />
             <Input
               label="Mão de obra"
               placeholder="Informe quantas horas essa obra durou"
@@ -538,48 +600,48 @@ const SoManagement = () => {
               <InputWithLabelAtTheTop
                 label="Data da abertura:"
                 disabled={true}
-                value="13/08/1997"
+                value={formatDate(openingDate)}
               />
               <InputWithLabelAtTheTop
                 label="Data do fechamento:"
                 disabled={true}
-                value="19/04/2021"
+                value={formatDate(closingDate)}
               />
             </InputLine>
             <InputLine>
               <InputWithLabelAtTheTop
                 label="Número da OS"
                 disabled={true}
-                value="100101"
+                value={SONumber}
               />
               <InputWithLabelAtTheTop
                 label="Cliente"
                 disabled={true}
-                value="Shoppping Maringá Park"
+                value={client?.name}
               />
             </InputLine>
             <InputLine>
               <InputWithLabelAtTheTop
                 label="Técnico"
                 disabled={true}
-                value="Heitor Franco"
+                value={responsibleTechnician?.name}
               />
               <InputWithLabelAtTheTop
                 label="Vendedor"
                 disabled={true}
-                value="Regina"
+                value={seller?.name}
               />
             </InputLine>
             <InputLine>
               <InputWithLabelAtTheTop
                 label="Mão de Obra"
                 disabled={true}
-                value="10 Horas"
+                value={manpower}
               />
               <InputWithLabelAtTheTop
                 label="Deslocamento"
                 disabled={true}
-                value="3 Visitas"
+                value={displacement}
               />
             </InputLine>
             <ItemsPurchasedContainer>
@@ -625,9 +687,6 @@ const SoManagement = () => {
               Cancelar
             </Button>
             <div style={{ display: "flex" }}>
-              <Button outline type="submit" color="#1AAE9F">
-                Encerrar e ver Detalhes
-              </Button>
               <Button style={{ marginLeft: 20 }} type="submit" color="#1AAE9F">
                 Imprimir OS
               </Button>
@@ -682,13 +741,13 @@ const SoManagement = () => {
                   <ButtonWithIcon
                     Icon={FiCoffee}
                     onClick={() => {
-                      setOpenAddMaterialToAnSoModal(true);
+                      openAddAMaterialFromAnOs(so);
                     }}
                   />
                   <ButtonWithIcon
                     Icon={FiCoffee}
                     onClick={() => {
-                      setOpenReturnAMaterialFromAnOsModal(true);
+                      openReturnAMaterialFromAnOs(so);
                     }}
                   />
                 </TableCell>
@@ -722,15 +781,11 @@ const SoManagement = () => {
                   <TableCell style={{ opacity: 0 }} align="right" width={160}>
                     <ButtonWithIcon
                       Icon={FiCoffee}
-                      onClick={() => {
-                        setOpenAddMaterialToAnSoModal(true);
-                      }}
+                      style={{ cursor: "default" }}
                     />
                     <ButtonWithIcon
                       Icon={FiCoffee}
-                      onClick={() => {
-                        setOpenReturnAMaterialFromAnOsModal(true);
-                      }}
+                      style={{ cursor: "default" }}
                     />
                   </TableCell>
                 </TableRow>
@@ -770,7 +825,7 @@ const SoManagement = () => {
                   <ButtonWithIcon
                     Icon={FiCoffee}
                     onClick={() => {
-                      setOpenEndAnOsModal(true);
+                      openEndAnOs(so);
                     }}
                   />
                 </TableCell>
@@ -810,15 +865,11 @@ const SoManagement = () => {
                   >
                     <ButtonWithIcon
                       Icon={FiCoffee}
-                      onClick={() => {
-                        setOpenAddMaterialToAnSoModal(true);
-                      }}
+                      style={{ cursor: "default" }}
                     />
                     <ButtonWithIcon
                       Icon={FiCoffee}
-                      onClick={() => {
-                        setOpenReturnAMaterialFromAnOsModal(true);
-                      }}
+                      style={{ cursor: "default" }}
                     />
                   </TableCell>
                 </TableRow>
@@ -852,7 +903,7 @@ const SoManagement = () => {
                   <ButtonWithIcon
                     Icon={FiCoffee}
                     onClick={() => {
-                      setOpenOsDetailsModal(true);
+                      openOsDetails(so);
                     }}
                   />
                 </TableCell>
@@ -886,15 +937,11 @@ const SoManagement = () => {
                   <TableCell style={{ opacity: 0 }} align="right" width={160}>
                     <ButtonWithIcon
                       Icon={FiCoffee}
-                      onClick={() => {
-                        setOpenAddMaterialToAnSoModal(true);
-                      }}
+                      style={{ cursor: "default" }}
                     />
                     <ButtonWithIcon
                       Icon={FiCoffee}
-                      onClick={() => {
-                        setOpenReturnAMaterialFromAnOsModal(true);
-                      }}
+                      style={{ cursor: "default" }}
                     />
                   </TableCell>
                 </TableRow>
