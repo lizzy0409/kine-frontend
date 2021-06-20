@@ -1,6 +1,7 @@
 import React, { FormEvent, useState } from "react";
 
 import CardForm from "../../components/CardForm";
+import api from "../../services/api";
 
 import { InputBlock, Input } from "./styles";
 
@@ -10,7 +11,11 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log("submit");
+    try {
+      await api.post("/login", { email, password });
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <CardForm
