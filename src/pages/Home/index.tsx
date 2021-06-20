@@ -15,6 +15,16 @@ import { SideBarContext } from "../../contexts/SideBarContext";
 
 import { useHistory } from "react-router-dom";
 
+import {
+  MdPlaylistAdd,
+  MdAddShoppingCart,
+  MdRemoveShoppingCart,
+} from "react-icons/md";
+
+import { FiShoppingBag } from "react-icons/fi";
+import { IoMdReturnLeft } from "react-icons/io";
+import { RiFileEditFill } from "react-icons/ri";
+
 interface MaterialsProps {
   name: string;
   quantity: number;
@@ -509,7 +519,7 @@ const Home: React.FC = () => {
           <Card
             title="Nova OS"
             text="Registrar uma nova ordem de serviço"
-            icon="i"
+            Icon={MdPlaylistAdd}
             onClick={() => {
               setOpenServiceOrderRegistrationModal(true);
             }}
@@ -517,31 +527,31 @@ const Home: React.FC = () => {
           <Card
             title="Nova Compra"
             text="Registrar a entrada de itens no almoxarifado"
-            icon="i"
+            Icon={MdAddShoppingCart}
             onClick={openNewPurchase}
           />
           <Card
             title="Saida do Estoque"
             text="Registrar a saída de itens do almoxarifado, para uma obra"
-            icon="i"
+            Icon={MdRemoveShoppingCart}
             onClick={openAddMaterial}
           />
           <Card
             title="Retorno ao Estoque"
             text="Registrar o retorno dos itens que tinham ido para uma obra"
-            icon="i"
+            Icon={IoMdReturnLeft}
             onClick={openReturnAMaterialFromAnOs}
           />
           <Card
             title="Estoque"
             text="Visualizar o estoque completo"
-            icon="i"
+            Icon={FiShoppingBag}
             onClick={openCurrentStock}
           />
           <Card
             title="Gerenciar OS's"
             text="Visualizar todas as OS do sistema"
-            icon="i"
+            Icon={RiFileEditFill}
             onClick={openSOManagement}
           />
         </Container>

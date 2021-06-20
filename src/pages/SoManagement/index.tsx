@@ -23,6 +23,11 @@ import Button from "../../components/Button";
 import ButtonWithIcon from "../../components/ButtonWithIcon";
 
 import { FiCoffee } from "react-icons/fi";
+import { ImBoxAdd, ImBoxRemove } from "react-icons/im";
+import { IoKey } from "react-icons/io5";
+import { FaLock, FaLockOpen } from "react-icons/fa";
+import { MdViewHeadline } from "react-icons/md";
+
 import Modal from "../../components/Modal";
 import Input from "../../components/Input";
 import api from "../../services/api";
@@ -733,19 +738,19 @@ const SoManagement = () => {
                 <TableCell align="left">R$ {so.costOfSO}</TableCell>
                 <TableCell align="right" width={160}>
                   <ButtonWithIcon
-                    Icon={FiCoffee}
+                    Icon={IoKey}
                     onClick={() => {
                       closeOS(so.id);
                     }}
                   />
                   <ButtonWithIcon
-                    Icon={FiCoffee}
+                    Icon={ImBoxAdd}
                     onClick={() => {
                       openAddAMaterialFromAnOs(so);
                     }}
                   />
                   <ButtonWithIcon
-                    Icon={FiCoffee}
+                    Icon={ImBoxRemove}
                     onClick={() => {
                       openReturnAMaterialFromAnOs(so);
                     }}
@@ -817,13 +822,13 @@ const SoManagement = () => {
                 <TableCell align="left">R$ {so.costOfSO}</TableCell>
                 <TableCell align="right" width={160}>
                   <ButtonWithIcon
-                    Icon={FiCoffee}
+                    Icon={FaLockOpen}
                     onClick={() => {
                       openOS(so.id);
                     }}
                   />
                   <ButtonWithIcon
-                    Icon={FiCoffee}
+                    Icon={FaLock}
                     onClick={() => {
                       openEndAnOs(so);
                     }}
@@ -901,7 +906,7 @@ const SoManagement = () => {
                 <TableCell align="left">R$ {so.costOfSO}</TableCell>
                 <TableCell align="right" width={160}>
                   <ButtonWithIcon
-                    Icon={FiCoffee}
+                    Icon={MdViewHeadline}
                     onClick={() => {
                       openOsDetails(so);
                     }}

@@ -16,11 +16,17 @@ import {
   Menu,
   Indicator,
   MenuItem,
-  Icon,
 } from "./styles";
 import api from "../../services/api";
 import { SideBarContext } from "../../contexts/SideBarContext";
 import { useLocation } from "react-router-dom";
+
+import { MdPlaylistAdd, MdAddShoppingCart } from "react-icons/md";
+
+import { FiShoppingBag } from "react-icons/fi";
+import { RiFileEditFill } from "react-icons/ri";
+import { AiFillHome } from "react-icons/ai";
+import { FaUserEdit } from "react-icons/fa";
 
 const Sidebar: React.FC = () => {
   const arr = ["/estoque-atual", "/gestao-de-os"];
@@ -96,23 +102,26 @@ const Sidebar: React.FC = () => {
             active={activePage === 0}
             onClick={() => setActivePage(0)}
           >
-            <Icon active={activePage === 0} />
+            <AiFillHome className="icon" />
             Início
           </MenuItem>
-          {/*<MenuItem
+          <MenuItem
             to="/gestao-de-os"
             active={activePage === 1}
-            onClick={() => setActivePage(1)}
+            onClick={() => {
+              alert("Em Desenvolvimento");
+            }}
           >
-            <Icon active={activePage === 1} />
+            <MdPlaylistAdd className="icon" />
             Nova OS
-          </MenuItem>*/}
+          </MenuItem>
+
           <MenuItem
             to="/estoque-atual"
             active={activePage === 2}
             onClick={() => setActivePage(2)}
           >
-            <Icon active={activePage === 2} />
+            <MdAddShoppingCart className="icon" />
             Nova Compra
           </MenuItem>
           <MenuItem
@@ -120,7 +129,7 @@ const Sidebar: React.FC = () => {
             active={activePage === 3}
             onClick={() => setActivePage(3)}
           >
-            <Icon active={activePage === 3} />
+            <FiShoppingBag className="icon" />
             Estoque Atual
           </MenuItem>
           <MenuItem
@@ -128,7 +137,7 @@ const Sidebar: React.FC = () => {
             active={activePage === 4}
             onClick={() => setActivePage(4)}
           >
-            <Icon active={activePage === 4} />
+            <RiFileEditFill className="icon" />
             Gestão das OS's
           </MenuItem>
           <MenuItem
@@ -136,7 +145,7 @@ const Sidebar: React.FC = () => {
             active={activePage === 5}
             onClick={() => setActivePage(5)}
           >
-            <Icon active={activePage === 5} />
+            <FaUserEdit className="icon" />
             Gerenciar Usuários
           </MenuItem>
         </Menu>

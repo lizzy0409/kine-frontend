@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { FiCoffee } from "react-icons/fi";
 
 export const Container = styled.div`
   width: 250px;
@@ -11,14 +10,14 @@ export const Container = styled.div`
   justify-content: space-between;
   padding: 25px 25px 15px 25px;
   cursor: pointer;
-`;
 
-export const Icon = styled(FiCoffee)`
-  font-size: 35px;
-  color: #4b5c6b;
+  & .icon {
+    font-size: 35px;
+    color: #4b5c6b;
 
-  margin-bottom: -10px;
-  margin-right: -10px;
+    margin-bottom: -10px;
+    margin-right: -10px;
+  }
 `;
 
 export const Title = styled.h1`

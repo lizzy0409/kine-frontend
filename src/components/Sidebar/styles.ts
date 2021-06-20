@@ -113,10 +113,10 @@ export const MenuItem = styled(Link)<MenuItemsProps>`
   color: ${({ active }) => (active ? "#6558f5" : "#293845")};
   cursor: pointer;
   font-weight: 500;
-`;
 
-export const Icon = styled(FiCoffee)<MenuItemsProps>`
-  font-size: 25px;
-  margin-right: 10px;
-  color: ${({ active }) => (active ? "#6558f5" : "#4b5c6b")};
+  & .icon {
+    font-size: 25px;
+    margin-right: 10px;
+    color: ${({ active }) => (active ? "#6558f5" : "#4b5c6b")};
+  }
 `;

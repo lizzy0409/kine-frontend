@@ -6,7 +6,8 @@ import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 
-import { FiCoffee } from "react-icons/fi";
+import { FiShoppingBag } from "react-icons/fi";
+import { MdAddShoppingCart } from "react-icons/md";
 
 import { Container } from "./styles";
 import CurrentStockContent from "../../components/CurrentStockContent";
@@ -114,7 +115,7 @@ export default function SimpleTabs() {
                 color: value === 0 ? "#6558f5" : "#000",
                 textTransform: "none",
               }}
-              icon={<FiCoffee fontSize={25} />}
+              icon={<FiShoppingBag fontSize={25} />}
             />
             <Tab
               label="Nova Compra"
@@ -123,7 +124,7 @@ export default function SimpleTabs() {
                 textTransform: "none",
               }}
               icon={
-                <FiCoffee
+                <MdAddShoppingCart
                   fontSize={25}
                   color={value === 1 ? "#6558f5" : "#000"}
                 />

@@ -1,21 +1,22 @@
 import React from "react";
+import { IconType } from "react-icons/lib";
 
-import { Container, Icon, Title, Text, IconContainer } from "./styles";
+import { Container, Title, Text, IconContainer } from "./styles";
 
 interface CardProps {
   title: string;
   text: string;
-  icon: string;
+  Icon: IconType;
   onClick?: () => void;
 }
 
-const Card: React.FC<CardProps> = ({ title, text, icon, onClick }) => {
+const Card: React.FC<CardProps> = ({ title, text, Icon, onClick }) => {
   return (
     <Container onClick={onClick}>
       <Title>{title}</Title>
       <Text>{text}</Text>
       <IconContainer>
-        <Icon />
+        <Icon className="icon" />
       </IconContainer>
     </Container>
   );
