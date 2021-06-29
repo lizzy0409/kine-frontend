@@ -502,7 +502,7 @@ const SoManagement = () => {
                 setOpenAddMaterialToAnSoModal(false);
               }}
             >
-              Cancelar
+              Voltar para OS
             </Button>
             <div style={{ display: "flex" }}>
               <Button
@@ -523,7 +523,7 @@ const SoManagement = () => {
                   setAddMaterialAndClose(true);
                 }}
               >
-                Salvar
+                Adicionar Material
               </Button>
             </div>
           </>
