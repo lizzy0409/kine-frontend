@@ -28,7 +28,7 @@ interface Teste {
 interface ProductProps {
   id: string;
   name: string;
-  value: number;
+  value: number | string;
   quantity: number;
   unitOfMeasure: string;
   costCenter: string;
@@ -59,14 +59,15 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
   const [costCenters, setCostCenters] = useState<Teste[]>([]);
 
   const [id, setId] = useState("");
-  const [totalPurchaseAmount, setTotalPurchaseAmount] = useState(0);
-  const [value, setValue] = useState<number>(0);
+  const [totalPurchaseAmount, setTotalPurchaseAmount] =
+    useState<number | string>("");
+  const [value, setValue] = useState<number | string>("");
   const [quantity, setQuantity] = useState<number>(0);
 
   function clearStates() {
     setId("");
     setName(null);
-    setValue(0);
+    setValue("");
     setQuantity(0);
     setUnitOfMeasure(null);
     setCostCenter(null);
@@ -168,7 +169,7 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
 
   function handleCancel() {
     setSupplier(null);
-    setTotalPurchaseAmount(0);
+    setTotalPurchaseAmount("");
     setProducts([]);
   }
 
@@ -220,11 +221,15 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
             <Input
               label="Valor Unitário"
               placeholder="Insira o Valor do Item"
+              onBlur={() => {
+                setValue(Number(value).toFixed(2));
+              }}
               type={"number"}
               min="0"
-              value={value === 0 ? "" : value}
+              step=".01"
+              value={value}
               onChange={(e) => {
-                setValue(Number(e.target.value));
+                setValue(e.target.value);
               }}
             />
             <Input
@@ -273,11 +278,15 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
             <Input
               label="Valor Unitário"
               placeholder="Insira o Valor do Item"
+              onBlur={() => {
+                setValue(Number(value).toFixed(2));
+              }}
               type={"number"}
-              min="0"
-              value={value === 0 ? "" : value}
+              min="0.01"
+              step=".01"
+              value={value}
               onChange={(e) => {
-                setValue(Number(e.target.value));
+                setValue(e.target.value);
               }}
             />
             <Input
@@ -337,10 +346,15 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
           <Input
             label="Valor Total da Compra"
             placeholder="Informe o valor total da compra"
+            onBlur={() => {
+              setTotalPurchaseAmount(Number(totalPurchaseAmount).toFixed(2));
+            }}
             type="number"
-            value={totalPurchaseAmount === 0 ? "" : totalPurchaseAmount}
+            min="0.01"
+            step=".01"
+            value={totalPurchaseAmount}
             onChange={(e) => {
-              setTotalPurchaseAmount(Number(e.target.value));
+              setTotalPurchaseAmount(e.target.value);
             }}
           />
         </div>
@@ -365,7 +379,7 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
                   <TableCell align="left">R$ {item.value}</TableCell>
                   <TableCell align="left">{item.quantity}</TableCell>
                   <TableCell align="left">
-                    R$ {item.quantity * item.value}
+                    R$ {item.quantity * Number(item.value)}
                   </TableCell>
                   <TableCell align="right">
                     <ButtonEdit onClick={() => OpenEditModal(item)} />
