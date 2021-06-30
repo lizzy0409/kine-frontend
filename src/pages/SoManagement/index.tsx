@@ -339,6 +339,23 @@ const SoManagement = () => {
     setOpenOsDetailsModal(true);
   }
 
+  async function handleReturnServiceOrder(e: FormEvent) {
+    e.preventDefault();
+
+    try {
+      const material = {
+        SONumber,
+        client: client?.name,
+        product: product?.name,
+        quantity,
+      };
+      await api.post("/return-material", material);
+      setOpenReturnAMaterialFromAnOsModal(false);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
     setProduct(null);
     setQuantity(0);
@@ -533,7 +550,7 @@ const SoManagement = () => {
       {openReturnAMaterialFromAnOsModal && (
         <Modal
           title="Retornar o Material à uma OS"
-          handleSubmit={handleServiceOrderRegistration}
+          handleSubmit={handleReturnServiceOrder}
           setOpenModal={setOpenReturnAMaterialFromAnOsModal}
         >
           <div>

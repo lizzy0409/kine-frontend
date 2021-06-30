@@ -250,12 +250,21 @@ const Home: React.FC = () => {
   }
 
   async function openReturnAMaterialFromAnOs() {
-    setModalAddEditableMaterial(true);
     setOpenReturnAMaterialFromAnOsModal(true);
+  }
+
+  async function handleReturnServiceOrder(e: FormEvent) {
+    e.preventDefault();
 
     try {
-      const { data } = await api.get(`/so?SONumber=${SONumber}`);
-      setMaterialsInSO(data.materials);
+      const material = {
+        SONumber,
+        client: client?.name,
+        product: product?.name,
+        quantity,
+      };
+      await api.post("/return-material", material);
+      setOpenReturnAMaterialFromAnOsModal(false);
     } catch (error) {
       console.log(error);
     }
@@ -463,12 +472,27 @@ const Home: React.FC = () => {
         {openReturnAMaterialFromAnOsModal && (
           <Modal
             title="Retornar o Material à uma OS"
-            handleSubmit={handleServiceOrderRegistration}
+            handleSubmit={handleReturnServiceOrder}
             setOpenModal={setOpenReturnAMaterialFromAnOsModal}
           >
             <div>
-              <Input label="Número da OS" disabled={true} value={SONumber} />
-              <Input label="Cliente" disabled={true} value={client?.name} />
+              <Input
+                label="Número da OS"
+                value={SONumber}
+                onChange={(e) => {
+                  setSONumber(e.target.value);
+                }}
+                onBlur={async () => {
+                  getClient();
+                  try {
+                    const { data } = await api.get(`/so?SONumber=${SONumber}`);
+                    setMaterialsInSO(data[0].materials);
+                  } catch (error) {
+                    console.log(error);
+                  }
+                }}
+              />
+              <Input label="Cliente" value={client?.name} disabled={true} />
               <Input
                 inputSearch
                 noAddOption
