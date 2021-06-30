@@ -44,7 +44,9 @@ export const GraphContent = styled.div<GraphProps>`
     }
   }};
 `;
-export const ButtonContainer = styled.div`
+export const RightContainer = styled.div`
   display: flex;
   justify-content: center;
 `;
+
+export const StockSize = styled.p``;

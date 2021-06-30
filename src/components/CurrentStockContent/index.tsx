@@ -10,7 +10,8 @@ import {
   Name,
   GraphContainer,
   GraphContent,
-  ButtonContainer,
+  RightContainer,
+  StockSize,
 } from "./styles";
 
 interface Teste {
@@ -70,8 +71,8 @@ const CurrentStockContent: React.FC<CurrentStockContentProps> = ({
                   percent={getPercent(product.quantity, product.stockLimit)}
                 />
               </GraphContainer>
-              <ButtonContainer>
-                <Button
+              <RightContainer>
+                {/*<Button
                   onClick={() => {
                     setPreData(product);
                     changeValue(1);
@@ -82,8 +83,11 @@ const CurrentStockContent: React.FC<CurrentStockContentProps> = ({
                   color={"#6558f5"}
                 >
                   Comprar
-                </Button>
-              </ButtonContainer>
+                </Button>*/}
+                <StockSize>
+                  {product.quantity}/{product.stockLimit}
+                </StockSize>
+              </RightContainer>
             </Product>
           ))}
       </ProductsTable>
