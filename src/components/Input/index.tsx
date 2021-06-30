@@ -15,6 +15,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   noAddOption?: boolean;
   inputSearchValue?: Teste | null;
   setValue?: React.Dispatch<React.SetStateAction<Teste | null>>;
+  disabled?: boolean;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -24,6 +25,7 @@ const Input: React.FC<InputProps> = ({
   inputSearchValue,
   setValue,
   noAddOption,
+  disabled,
   ...rest
 }) => {
   return (
@@ -39,6 +41,7 @@ const Input: React.FC<InputProps> = ({
           setValue={setValue!}
           data={data!}
           noAddOption={noAddOption}
+          disabled={disabled}
           {...rest}
         />
       ) : (

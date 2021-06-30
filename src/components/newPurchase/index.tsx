@@ -64,6 +64,8 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
   const [value, setValue] = useState<number | string>("");
   const [quantity, setQuantity] = useState<number>(0);
 
+  const [costCenterDisabled, setCostCenterDisabled] = useState(false);
+
   function clearStates() {
     setId("");
     setName(null);
@@ -71,6 +73,7 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
     setQuantity(0);
     setUnitOfMeasure(null);
     setCostCenter(null);
+    setCostCenterDisabled(false);
   }
 
   function addProduct(product: ProductProps) {
@@ -178,8 +181,17 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
       const { data: suppliers } = await api.get("/suppliers");
       setSuppliers(suppliers);
 
-      const { data: materials } = await api.get("/materials");
-      setNames(materials);
+      const { data } = await api.get<ProductProps[]>("/products");
+
+      let parsedData: Teste[] = [];
+
+      /*const { data: materials } = await api.get("/materials");
+      setNames(materials);*/
+
+      data.forEach((product) => {
+        parsedData.push({ name: product.name });
+      });
+      setNames(parsedData);
 
       const { data: unitOfMeasures } = await api.get("/unitOfMeasures");
       setUnitOfMeasures(unitOfMeasures);
@@ -191,6 +203,16 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
     }
   }
 
+  const getProductDetails = async () => {
+    const { data } = await api.get(`/products?name=${name?.name}`);
+
+    if (data.length) {
+      setCostCenterDisabled(true);
+      setCostCenter({ name: data[0].costCenter });
+      setUnitOfMeasure({ name: data[0].unitOfMeasure });
+    }
+  };
+
   useEffect(() => {
     if (!openModal) {
       clearStates();
@@ -200,6 +222,10 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
   useEffect(() => {
     getInputSearchResults();
   }, []);
+
+  useEffect(() => {
+    getProductDetails();
+  }, [name]);
 
   return (
     <>
@@ -306,6 +332,7 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
               placeholder="Selecione a quantidade"
               inputSearchValue={unitOfMeasure}
               setValue={setUnitOfMeasure}
+              disabled={costCenterDisabled}
             />
             <Input
               inputSearch
@@ -314,6 +341,7 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
               placeholder="Selecione a Categoria do Produto"
               inputSearchValue={costCenter}
               setValue={setCostCenter}
+              disabled={true}
             />
           </div>
           <>

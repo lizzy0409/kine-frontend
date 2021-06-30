@@ -20,6 +20,7 @@ interface InputSeach extends InputHTMLAttributes<HTMLInputElement> {
   inputSearchValue: Teste | null;
   setValue: React.Dispatch<React.SetStateAction<Teste | null>>;
   noAddOption?: boolean;
+  disabled?: boolean;
 }
 
 const InputSearch: React.FC<InputSeach> = ({
@@ -28,6 +29,8 @@ const InputSearch: React.FC<InputSeach> = ({
   inputSearchValue,
   setValue,
   noAddOption,
+  disabled,
+  ...rest
 }) => {
   if (noAddOption) {
     return (
@@ -48,6 +51,7 @@ const InputSearch: React.FC<InputSeach> = ({
             setValue(newValue);
           }
         }}
+        disabled={disabled}
         options={data}
         getOptionLabel={(option) => option.name}
         renderInput={(params) => (
@@ -112,6 +116,7 @@ const InputSearch: React.FC<InputSeach> = ({
       }}
       renderOption={(option) => option.name}
       freeSolo
+      disabled={disabled}
       //renderInput={(params) => <TextField {...params} variant="outlined" />}
       renderInput={(params) => (
         <div ref={params.InputProps.ref}>
