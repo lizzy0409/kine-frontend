@@ -754,9 +754,19 @@ const SoManagement = () => {
                 setOpenOsDetailsModal(false);
               }}
             >
-              Cancelar
+              Fechar
             </Button>
             <div style={{ display: "flex" }}>
+              <Button
+                style={{ marginLeft: 20 }}
+                type="button"
+                onClick={() => {
+                  alert("Negociar funcionalidade (44) 9 9957-1618");
+                }}
+                color="#1AAE9F"
+              >
+                Editar
+              </Button>
               <Button style={{ marginLeft: 20 }} type="submit" color="#1AAE9F">
                 Imprimir OS
               </Button>
