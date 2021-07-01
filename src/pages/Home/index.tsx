@@ -479,6 +479,7 @@ const Home: React.FC = () => {
               <Input
                 label="Número da OS"
                 value={SONumber}
+                type="number"
                 onChange={(e) => {
                   setSONumber(e.target.value);
                 }}

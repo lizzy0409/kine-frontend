@@ -87,6 +87,8 @@ const SoManagement = () => {
     []
   );
 
+  const [closeAndSeeDetails, setCloseAndSeeDetails] = useState(false);
+
   const [
     openServiceOrderRegistrationModal,
     setOpenServiceOrderRegistrationModal,
@@ -293,6 +295,12 @@ const SoManagement = () => {
       setOpenEndAnOsModal(false);
       clearInputs();
       getSO();
+      console.log(closeAndSeeDetails);
+
+      if (closeAndSeeDetails) {
+        openOsDetails(data[0]);
+        setCloseAndSeeDetails(false);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -322,6 +330,8 @@ const SoManagement = () => {
   function openEndAnOs(so: SOProps) {
     setSONumber(so.SONumber);
     setClient({ name: so.client });
+    setDisplacement(0);
+    setManpower(0);
     setOpenEndAnOsModal(true);
   }
 
@@ -371,12 +381,6 @@ const SoManagement = () => {
       clearInputs();
     }
   }, [openServiceOrderRegistrationModal]);
-
-  useEffect(() => {
-    if (!openAddMaterialToAnSoModal) {
-      setModalAddEditableMaterial(false);
-    }
-  }, [openAddMaterialToAnSoModal]);
 
   return (
     <Container>
@@ -639,7 +643,12 @@ const SoManagement = () => {
               Cancelar
             </Button>
             <div style={{ display: "flex" }}>
-              <Button outline type="submit" color="#1AAE9F">
+              <Button
+                outline
+                type="submit"
+                color="#1AAE9F"
+                onClick={() => setCloseAndSeeDetails(true)}
+              >
                 Encerrar e ver Detalhes
               </Button>
               <Button style={{ marginLeft: 20 }} type="submit" color="#1AAE9F">
