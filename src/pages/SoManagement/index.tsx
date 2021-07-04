@@ -32,6 +32,10 @@ import Modal from "../../components/Modal";
 import Input from "../../components/Input";
 import api from "../../services/api";
 import formatDate from "../../utils/formatDate";
+import ButtonEdit from "../../components/ButtonEdit";
+import ButtonRemoveProduct from "../../components/ButtonRemoveProduct";
+import randomId from "../../utils/randomId";
+import zIndex from "@material-ui/core/styles/zIndex";
 
 interface SOProps {
   id: string;
@@ -55,6 +59,7 @@ interface ProductProps {
 }
 
 interface MaterialsProps {
+  id: string;
   name: string;
   quantity: number;
   value: number;
@@ -66,6 +71,9 @@ interface Teste {
 }
 
 const SoManagement = () => {
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [id, setId] = useState("");
+
   const [modalAddEditableMaterial, setModalAddEditableMaterial] =
     useState(false);
 
@@ -140,7 +148,7 @@ const SoManagement = () => {
       closed: false,
       openingDate: new Date(),
       closingDate: new Date(),
-      materials,
+      materials: materials.map((data) => ({ ...data, id: undefined })),
     };
 
     api.post("/so", so);
@@ -236,13 +244,23 @@ const SoManagement = () => {
         if (addMaterialAndClose) {
           setMaterials([
             ...materials,
-            { name: product!.name, quantity, value: data[0].value },
+            {
+              id: randomId(),
+              name: product!.name,
+              quantity,
+              value: data[0].value,
+            },
           ]);
           setOpenAddMaterialToAnSoModal(false);
         } else {
           setMaterials([
             ...materials,
-            { name: product!.name, quantity, value: data[0].value },
+            {
+              id: randomId(),
+              name: product!.name,
+              quantity,
+              value: data[0].value,
+            },
           ]);
           setProduct(null);
           setQuantity(0);
@@ -366,6 +384,50 @@ const SoManagement = () => {
     }
   }
 
+  async function editProduct(material: MaterialsProps) {
+    setMaterials((data) =>
+      data.map((item) => {
+        if (item.id === material.id) {
+          return {
+            id: material.id,
+            value: item.value,
+            name: material.name,
+            quantity: material.quantity,
+          };
+        }
+        return item;
+      })
+    );
+  }
+  function OpenEditModal(material: MaterialsProps) {
+    setOpenEditModal(true);
+    setId(material.id);
+    setProduct({ name: material.name });
+    setQuantity(material.quantity);
+  }
+
+  function removeProduct(material: MaterialsProps) {
+    setMaterials((data) => data.filter((item) => item !== material));
+  }
+
+  async function handleEditSubmit(e: FormEvent) {
+    e.preventDefault();
+    try {
+      const { data } = await api.get(`/products?name=${product!.name}`);
+
+      const material: MaterialsProps = {
+        id: id,
+        name: product?.name || "",
+        value: data[0].value,
+        quantity,
+      };
+      editProduct(material);
+      setOpenEditModal(false);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
     setProduct(null);
     setQuantity(0);
@@ -384,12 +446,59 @@ const SoManagement = () => {
 
   return (
     <Container>
+      {openEditModal && (
+        <Modal
+          title="Editar Produto"
+          handleSubmit={handleEditSubmit}
+          setOpenModal={setOpenEditModal}
+          style={{ zIndex: 100 }}
+        >
+          <div>
+            <Input
+              inputSearch
+              data={materialsInStock}
+              label="Nome do Produto"
+              noAddOption
+              placeholder="Insira o nome do Produto"
+              inputSearchValue={product}
+              setValue={setProduct}
+            />
+            <Input
+              label="Quantidade"
+              placeholder="Insira a Quantidade Comprada"
+              type={"number"}
+              min="0"
+              value={quantity === 0 ? "" : quantity}
+              onChange={(e) => {
+                setQuantity(Number(e.target.value));
+              }}
+            />
+          </div>
+          <>
+            <Button
+              type="button"
+              outline
+              color="#6558F5"
+              onClick={() => {
+                setOpenEditModal(false);
+              }}
+            >
+              Cancelar
+            </Button>
+            <Button type="submit" style={{ width: 160 }} color="#1AAE9F">
+              Salvar alterações
+            </Button>
+          </>
+        </Modal>
+      )}
       {openServiceOrderRegistrationModal && (
         <Modal
           title="Cadastro de Ordem de Serviço"
           handleSubmit={handleServiceOrderRegistration}
           setOpenModal={setOpenServiceOrderRegistrationModal}
-          style={{ opacity: openAddMaterialToAnSoModal ? 0 : 1 }}
+          style={{
+            opacity: openAddMaterialToAnSoModal || openEditModal ? 0 : 1,
+          }}
         >
           <div>
             <Input
@@ -436,7 +545,11 @@ const SoManagement = () => {
                   {materials.length !== 0 ? (
                     <MyTableExcel
                       style={{ margin: 0 }}
-                      columns={[{ name: "Material" }, { name: "Quantidade" }]}
+                      columns={[
+                        { name: "Material" },
+                        { name: "Quantidade" },
+                        { name: "Ações" },
+                      ]}
                     >
                       {materials.map((material: MaterialsProps) => (
                         <TableRow key={material.name}>
@@ -445,6 +558,14 @@ const SoManagement = () => {
                           </TableCell>
                           <TableCell align="left">
                             {material.quantity}
+                          </TableCell>
+                          <TableCell align="right">
+                            <ButtonEdit
+                              onClick={() => OpenEditModal(material)}
+                            />
+                            <ButtonRemoveProduct
+                              onClick={() => removeProduct(material)}
+                            />
                           </TableCell>
                         </TableRow>
                       ))}

@@ -281,7 +281,7 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
               Cancelar
             </Button>
             <Button type="submit" style={{ width: 160 }} color="#1AAE9F">
-              Salvar alteraçõẽs
+              Salvar alterações
             </Button>
           </>
         </Modal>
