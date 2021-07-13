@@ -7,6 +7,7 @@ import ManageUsers from "./pages/ManageUsers";
 import CurrentStock from "./pages/CurrentStock";
 import SoManagement from "./pages/SoManagement";
 import Sidebar from "./components/Sidebar";
+import Print from "./pages/Print";
 
 const Routes: React.FC = () => {
   return (
@@ -20,6 +21,7 @@ const Routes: React.FC = () => {
           <Route path="/gerenciar-usuarios" component={ManageUsers} />
           <Route exact path="/estoque-atual" component={CurrentStock} />
           <Route exact path="/gestao-de-os" component={SoManagement} />
+          <Route exact path="/print/:id" component={Print} />
         </Switch>
       </BrowserRouter>
     </>

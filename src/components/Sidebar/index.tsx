@@ -70,7 +70,10 @@ const Sidebar: React.FC = () => {
   }, []);
 
   return (
-    <Container open={alwaysOpen ? true : !!open}>
+    <Container
+      style={{ opacity: location.pathname == "/print" ? "0" : "1" }}
+      open={alwaysOpen ? true : !!open}
+    >
       {setOpen && !alwaysOpen && (
         <CloseSidebar
           onClick={() => {

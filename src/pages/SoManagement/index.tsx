@@ -35,7 +35,6 @@ import formatDate from "../../utils/formatDate";
 import ButtonEdit from "../../components/ButtonEdit";
 import ButtonRemoveProduct from "../../components/ButtonRemoveProduct";
 import randomId from "../../utils/randomId";
-import zIndex from "@material-ui/core/styles/zIndex";
 
 interface SOProps {
   id: string;
@@ -355,6 +354,7 @@ const SoManagement = () => {
 
   async function openOsDetails(so: SOProps) {
     const { data } = await api.get(`/so/${so.id}`);
+    setId(data.id);
     setProducts(data.materials);
     setOpeningDate(data.openingDate);
     setClosingDate(data.closingDate);
@@ -888,9 +888,20 @@ const SoManagement = () => {
               >
                 Editar
               </Button>
-              <Button style={{ marginLeft: 20 }} type="submit" color="#1AAE9F">
-                Imprimir OS
-              </Button>
+              <a
+                href={`/print/${id}`}
+                rel="noreferrer"
+                target="_blank"
+                style={{ textDecoration: "none" }}
+              >
+                <Button
+                  type="button"
+                  style={{ marginLeft: 20 }}
+                  color="#1AAE9F"
+                >
+                  Imprimir OS
+                </Button>
+              </a>
             </div>
           </>
         </Modal>
