@@ -279,6 +279,19 @@ const Home: React.FC = () => {
     }
   }, [openAddMaterialToAnSoModal]);
 
+  useEffect(() => {
+    if (modalAddEditableMaterial) {
+      setSONumber("");
+      setClient({ name: "" });
+    }
+    setProduct(null);
+    setQuantity(0);
+  }, [
+    modalAddEditableMaterial,
+    openAddMaterialToAnSoModal,
+    openReturnAMaterialFromAnOsModal,
+  ]);
+
   return (
     <>
       <Header pageName={"Início"} />
