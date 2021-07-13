@@ -24,8 +24,12 @@ import {
 import { FiShoppingBag } from "react-icons/fi";
 import { IoMdReturnLeft } from "react-icons/io";
 import { RiFileEditFill } from "react-icons/ri";
+import ButtonEdit from "../../components/ButtonEdit";
+import ButtonRemoveProduct from "../../components/ButtonRemoveProduct";
+import randomId from "../../utils/randomId";
 
 interface MaterialsProps {
+  id: string;
   name: string;
   quantity: number;
   value: number;
@@ -39,17 +43,6 @@ interface ProductProps {
   unitOfMeasure: string;
   costCenter: string;
 }
-interface SOProps {
-  id: string;
-  SONumber: string;
-  client: string;
-  seller: string;
-  responsibleTechnician: string;
-  costOfSO: string;
-  running: true;
-  completed: false;
-  closed: false;
-}
 
 interface Teste {
   inputValue?: string;
@@ -57,6 +50,9 @@ interface Teste {
 }
 
 const Home: React.FC = () => {
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [id, setId] = useState("");
+
   const history = useHistory();
   const { setActivePage } = useContext(SideBarContext);
 
@@ -168,13 +164,23 @@ const Home: React.FC = () => {
         if (addMaterialAndClose) {
           setMaterials([
             ...materials,
-            { name: product!.name, quantity, value: data[0].value },
+            {
+              id: randomId(),
+              name: product!.name,
+              quantity,
+              value: data[0].value,
+            },
           ]);
           setOpenAddMaterialToAnSoModal(false);
         } else {
           setMaterials([
             ...materials,
-            { name: product!.name, quantity, value: data[0].value },
+            {
+              id: randomId(),
+              name: product!.name,
+              quantity,
+              value: data[0].value,
+            },
           ]);
           setProduct(null);
           setQuantity(0);
@@ -269,6 +275,48 @@ const Home: React.FC = () => {
       console.log(error);
     }
   }
+  async function editProduct(material: MaterialsProps) {
+    setMaterials((data) =>
+      data.map((item) => {
+        if (item.id === material.id) {
+          return {
+            id: material.id,
+            value: item.value,
+            name: material.name,
+            quantity: material.quantity,
+          };
+        }
+        return item;
+      })
+    );
+  }
+  async function handleEditSubmit(e: FormEvent) {
+    e.preventDefault();
+    try {
+      const { data } = await api.get(`/products?name=${product!.name}`);
+
+      const material: MaterialsProps = {
+        id: id,
+        name: product?.name || "",
+        value: data[0].value,
+        quantity,
+      };
+      editProduct(material);
+      setOpenEditModal(false);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  function OpenEditModal(material: MaterialsProps) {
+    setOpenEditModal(true);
+    setId(material.id);
+    setProduct({ name: material.name });
+    setQuantity(material.quantity);
+  }
+
+  function removeProduct(material: MaterialsProps) {
+    setMaterials((data) => data.filter((item) => item !== material));
+  }
 
   useEffect(() => {
     getInputSearchResults();
@@ -296,12 +344,59 @@ const Home: React.FC = () => {
     <>
       <Header pageName={"Início"} />
       <Wrapper>
+        {openEditModal && (
+          <Modal
+            title="Editar Produto"
+            handleSubmit={handleEditSubmit}
+            setOpenModal={setOpenEditModal}
+            style={{ zIndex: 100 }}
+          >
+            <div>
+              <Input
+                inputSearch
+                data={materialsInStock}
+                label="Nome do Produto"
+                noAddOption
+                placeholder="Insira o nome do Produto"
+                inputSearchValue={product}
+                setValue={setProduct}
+              />
+              <Input
+                label="Quantidade"
+                placeholder="Insira a Quantidade Comprada"
+                type={"number"}
+                min="0"
+                value={quantity === 0 ? "" : quantity}
+                onChange={(e) => {
+                  setQuantity(Number(e.target.value));
+                }}
+              />
+            </div>
+            <>
+              <Button
+                type="button"
+                outline
+                color="#6558F5"
+                onClick={() => {
+                  setOpenEditModal(false);
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button type="submit" style={{ width: 160 }} color="#1AAE9F">
+                Salvar alterações
+              </Button>
+            </>
+          </Modal>
+        )}
         {openServiceOrderRegistrationModal && (
           <Modal
             title="Cadastro de Ordem de Serviço"
             handleSubmit={handleServiceOrderRegistration}
             setOpenModal={setOpenServiceOrderRegistrationModal}
-            style={{ opacity: openAddMaterialToAnSoModal ? 0 : 1 }}
+            style={{
+              opacity: openAddMaterialToAnSoModal || openEditModal ? 0 : 1,
+            }}
           >
             <div>
               <Input
@@ -352,7 +447,11 @@ const Home: React.FC = () => {
                     {materials.length !== 0 ? (
                       <MyTableExcel
                         style={{ margin: 0 }}
-                        columns={[{ name: "Material" }, { name: "Quantidade" }]}
+                        columns={[
+                          { name: "Material" },
+                          { name: "Quantidade" },
+                          { name: "Ações" },
+                        ]}
                       >
                         {materials.map((material: MaterialsProps) => (
                           <TableRow key={material.name}>
@@ -361,6 +460,14 @@ const Home: React.FC = () => {
                             </TableCell>
                             <TableCell align="left">
                               {material.quantity}
+                            </TableCell>
+                            <TableCell align="right">
+                              <ButtonEdit
+                                onClick={() => OpenEditModal(material)}
+                              />
+                              <ButtonRemoveProduct
+                                onClick={() => removeProduct(material)}
+                              />
                             </TableCell>
                           </TableRow>
                         ))}
