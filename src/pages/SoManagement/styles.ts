@@ -2,12 +2,22 @@ import styled from "styled-components";
 
 import { FiPlus, FiPlusCircle } from "react-icons/fi";
 
-export const Container = styled.div`
-  padding: 20px 20px 20px 320px;
+interface SidebarOpen {
+  open: boolean;
+}
+
+interface ContainerProps extends SidebarOpen {}
+
+export const Container = styled.div<ContainerProps>`
+  padding: 80px 20px 20px 20px;
   height: 100%;
   min-height: 100vh;
   max-width: 100vw;
   background-color: #dfe6ed;
+
+  padding-left: ${({ open }) => (open ? "330px" : "30px")};
+
+  transition: padding-left 0.5s;
 `;
 
 export const InputLine = styled.div`

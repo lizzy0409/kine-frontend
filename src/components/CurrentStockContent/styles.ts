@@ -6,7 +6,7 @@ interface GraphProps {
 
 export const Container = styled.div`
   overflow-y: auto;
-  max-height: calc((100vh - 40px) - 77px);
+  max-height: calc((100vh - 100px) - 77px);
   padding: 24px;
 `;
 export const ProductsTable = styled.div``;

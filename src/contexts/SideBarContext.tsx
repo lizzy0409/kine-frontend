@@ -1,4 +1,5 @@
 import React, { createContext, useState } from "react";
+import usePersistedState from "../utils/usePersistedState";
 
 interface SidebarData {
   open: boolean;
@@ -10,8 +11,8 @@ interface SidebarData {
 export const SideBarContext = createContext({} as SidebarData);
 
 const SideBarProvider: React.FC = ({ children }) => {
-  const [open, setOpen] = useState(false);
-  const [activePage, setActivePage] = useState(0);
+  const [open, setOpen] = usePersistedState("sidebarOpen", false);
+  const [activePage, setActivePage] = usePersistedState("activePage", 0);
 
   return (
     <SideBarContext.Provider

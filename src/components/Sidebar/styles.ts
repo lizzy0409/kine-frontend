@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { FiCoffee } from "react-icons/fi";
+import { FiPlusCircle } from "react-icons/fi";
 
 import { Link } from "react-router-dom";
 
@@ -119,4 +119,26 @@ export const MenuItem = styled(Link)<MenuItemsProps>`
     margin-right: 10px;
     color: ${({ active }) => (active ? "#6558f5" : "#4b5c6b")};
   }
+`;
+
+export const InputLine = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 40px;
+  align-items: center;
+  padding: 0 10px;
+`;
+
+export const Label = styled.label`
+  text-align: center;
+
+  &.label-top {
+    font-size: 15px;
+    color: #788896;
+  }
+`;
+
+export const PlusCircleIcon = styled(FiPlusCircle)`
+  font-size: 20px;
+  margin-right: 3px;
 `;

@@ -1,8 +1,10 @@
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useContext, useEffect, useState } from "react";
 import MyTableExcel from "../../components/ExcelTable";
 
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
+
+import HeaderPage from "../../components/Header";
 
 import {
   Container,
@@ -22,7 +24,6 @@ import InputWithLabelAtTheTop from "../../components/InputWithLabelAtTheTop";
 import Button from "../../components/Button";
 import ButtonWithIcon from "../../components/ButtonWithIcon";
 
-import { FiCoffee } from "react-icons/fi";
 import { ImBoxAdd, ImBoxRemove } from "react-icons/im";
 import { IoKey } from "react-icons/io5";
 import { FaLock, FaLockOpen } from "react-icons/fa";
@@ -35,6 +36,7 @@ import formatDate from "../../utils/formatDate";
 import ButtonEdit from "../../components/ButtonEdit";
 import ButtonRemoveProduct from "../../components/ButtonRemoveProduct";
 import randomId from "../../utils/randomId";
+import { SideBarContext } from "../../contexts/SideBarContext";
 
 interface SOProps {
   id: string;
@@ -70,6 +72,8 @@ interface Teste {
 }
 
 const SoManagement = () => {
+  const { open } = useContext(SideBarContext);
+
   const [openEditModal, setOpenEditModal] = useState(false);
   const [id, setId] = useState("");
 
@@ -445,722 +449,641 @@ const SoManagement = () => {
   }, [openServiceOrderRegistrationModal]);
 
   return (
-    <Container>
-      {openEditModal && (
-        <Modal
-          title="Editar Produto"
-          handleSubmit={handleEditSubmit}
-          setOpenModal={setOpenEditModal}
-          style={{ zIndex: 100 }}
-        >
-          <div>
-            <Input
-              inputSearch
-              data={materialsInStock}
-              label="Nome do Produto"
-              noAddOption
-              placeholder="Insira o nome do Produto"
-              inputSearchValue={product}
-              setValue={setProduct}
-            />
-            <Input
-              label="Quantidade"
-              placeholder="Insira a Quantidade Comprada"
-              type={"number"}
-              min="0"
-              value={quantity === 0 ? "" : quantity}
-              onChange={(e) => {
-                setQuantity(Number(e.target.value));
-              }}
-            />
-          </div>
-          <>
-            <Button
-              type="button"
-              outline
-              color="#6558F5"
-              onClick={() => {
-                setOpenEditModal(false);
-              }}
-            >
-              Cancelar
-            </Button>
-            <Button type="submit" style={{ width: 160 }} color="#1AAE9F">
-              Salvar alterações
-            </Button>
-          </>
-        </Modal>
-      )}
-      {openServiceOrderRegistrationModal && (
-        <Modal
-          title="Cadastro de Ordem de Serviço"
-          handleSubmit={handleServiceOrderRegistration}
-          setOpenModal={setOpenServiceOrderRegistrationModal}
-          style={{
-            opacity: openAddMaterialToAnSoModal || openEditModal ? 0 : 1,
-          }}
-        >
-          <div>
-            <Input
-              label="Número da OS"
-              placeholder="Insira o número da OS"
-              value={SONumber}
-              type="number"
-              min="0"
-              onChange={(e) => {
-                setSONumber(e.target.value);
-              }}
-            />
-            <Input
-              inputSearch
-              data={clients}
-              label="Cliente"
-              placeholder="Insira o cliente"
-              inputSearchValue={client}
-              setValue={setClient}
-            />
-            <Input
-              inputSearch
-              data={sellers}
-              label="Vendedor"
-              placeholder="Insira o nome do vendedor"
-              inputSearchValue={seller}
-              setValue={setSeller}
-            />
-            <Input
-              inputSearch
-              data={responsibleTechnicians}
-              label="Técnico Responsável"
-              placeholder="Insira o nome do técnico responsável"
-              inputSearchValue={responsibleTechnician}
-              setValue={setResponsibleTechnician}
-            />
+    <>
+      <HeaderPage pageName={"Gestão de OS"} />
 
-            <InputLine
-              style={{ gridTemplateColumns: "1fr 2.5fr", padding: 0, gap: 60 }}
-            >
-              <Label>Materiais</Label>
-              <div>
-                <Label className="label-top">
-                  {materials.length !== 0 ? (
-                    <MyTableExcel
-                      style={{ margin: 0 }}
-                      columns={[
-                        { name: "Material" },
-                        { name: "Quantidade" },
-                        { name: "Ações" },
-                      ]}
-                    >
-                      {materials.map((material: MaterialsProps) => (
-                        <TableRow key={material.name}>
-                          <TableCell width={150} component="th" scope="row">
-                            {material.name}
-                          </TableCell>
-                          <TableCell align="left">
-                            {material.quantity}
-                          </TableCell>
-                          <TableCell align="right">
-                            <ButtonEdit
-                              onClick={() => OpenEditModal(material)}
-                            />
-                            <ButtonRemoveProduct
-                              onClick={() => removeProduct(material)}
-                            />
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </MyTableExcel>
-                  ) : (
-                    "Sem itens alocados a essa OS"
-                  )}
-                </Label>
-                <Button
-                  type="button"
-                  outline
-                  color="#6558F5"
-                  onClick={() => {
-                    addMaterialToAnOs();
-                  }}
-                >
-                  <PlusCircleIcon /> Adicionar Material á OS
-                </Button>
-              </div>
-            </InputLine>
-          </div>
-          <>
-            <Button
-              type="button"
-              outline
-              color="#6558F5"
-              onClick={() => {
-                setOpenServiceOrderRegistrationModal(false);
-              }}
-            >
-              Cancelar
-            </Button>
-            <Button type="submit" color="#1AAE9F">
-              Criar OS
-            </Button>
-          </>
-        </Modal>
-      )}
-
-      {openAddMaterialToAnSoModal && (
-        <Modal
-          title="Adicionar Material à uma OS"
-          handleSubmit={handleAddMaterialToAnSoModal}
-          setOpenModal={setOpenAddMaterialToAnSoModal}
-        >
-          <div>
-            <Input label="Número da OS" disabled={true} value={SONumber} />
-            <Input label="Cliente" disabled={true} value={client?.name || ""} />
-            <Input
-              inputSearch
-              noAddOption
-              data={materialsInStock}
-              label="Produto"
-              placeholder="Ex: Mangueira, Parafuso, Suporte, etc..."
-              inputSearchValue={product}
-              setValue={setProduct}
-            />
-
-            <Input
-              label="Quantidade"
-              placeholder="Informe a quantidade do material"
-              type="number"
-              value={quantity === 0 ? "" : quantity}
-              min="0"
-              onChange={(e) => {
-                setQuantity(Number(e.target.value));
-              }}
-            />
-          </div>
-          <>
-            <Button
-              type="button"
-              outline
-              color="#6558F5"
-              onClick={() => {
-                setOpenAddMaterialToAnSoModal(false);
-              }}
-            >
-              Voltar para OS
-            </Button>
-            <div style={{ display: "flex" }}>
+      <Container open={open}>
+        {openEditModal && (
+          <Modal
+            title="Editar Produto"
+            handleSubmit={handleEditSubmit}
+            setOpenModal={setOpenEditModal}
+            style={{ zIndex: 100 }}
+          >
+            <div>
+              <Input
+                inputSearch
+                data={materialsInStock}
+                label="Nome do Produto"
+                noAddOption
+                placeholder="Insira o nome do Produto"
+                inputSearchValue={product}
+                setValue={setProduct}
+              />
+              <Input
+                label="Quantidade"
+                placeholder="Insira a Quantidade Comprada"
+                type={"number"}
+                min="0"
+                value={quantity === 0 ? "" : quantity}
+                onChange={(e) => {
+                  setQuantity(Number(e.target.value));
+                }}
+              />
+            </div>
+            <>
               <Button
+                type="button"
                 outline
-                type="submit"
-                color="#1AAE9F"
+                color="#6558F5"
                 onClick={() => {
-                  setAddMaterialAndClose(false);
+                  setOpenEditModal(false);
                 }}
               >
-                Salvar e Adicionar Mais itens
+                Cancelar
               </Button>
-              <Button
-                style={{ marginLeft: 20 }}
-                type="submit"
-                color="#1AAE9F"
-                onClick={() => {
-                  setAddMaterialAndClose(true);
-                }}
-              >
-                Adicionar Material
+              <Button type="submit" style={{ width: 160 }} color="#1AAE9F">
+                Salvar alterações
               </Button>
-            </div>
-          </>
-        </Modal>
-      )}
-
-      {openReturnAMaterialFromAnOsModal && (
-        <Modal
-          title="Retornar o Material à uma OS"
-          handleSubmit={handleReturnServiceOrder}
-          setOpenModal={setOpenReturnAMaterialFromAnOsModal}
-        >
-          <div>
-            <Input label="Número da OS" disabled={true} value={SONumber} />
-            <Input label="Cliente" disabled={true} value={client?.name} />
-            <Input
-              inputSearch
-              noAddOption
-              data={materialsInSO}
-              label="Produto"
-              placeholder="Ex: Mangueira, Parafuso, Suporte, etc..."
-              inputSearchValue={product}
-              setValue={setProduct}
-            />
-            <Input
-              label="Quantidade"
-              placeholder="Informe a quantidade do material"
-              type="number"
-              value={quantity === 0 ? "" : quantity}
-              min="0"
-              onChange={(e) => {
-                setQuantity(Number(e.target.value));
-              }}
-            />
-          </div>
-          <>
-            <Button
-              type="button"
-              outline
-              color="#6558F5"
-              onClick={() => {
-                setOpenReturnAMaterialFromAnOsModal(false);
-              }}
-            >
-              Cancelar
-            </Button>
-            <div style={{ display: "flex" }}>
-              <Button outline type="submit" color="#1AAE9F">
-                Salvar e Adicionar Mais itens
-              </Button>
-              <Button style={{ marginLeft: 20 }} type="submit" color="#1AAE9F">
-                Salvar
-              </Button>
-            </div>
-          </>
-        </Modal>
-      )}
-
-      {openEndAnOsModal && (
-        <Modal
-          title="Encerrar uma OS"
-          handleSubmit={handleEndAnOSSubmit}
-          setOpenModal={setOpenEndAnOsModal}
-        >
-          <div>
-            <Input label="Número da OS" disabled={true} value={SONumber} />
-            <Input label="Cliente" disabled={true} value={client?.name} />
-            <Input
-              label="Mão de obra"
-              placeholder="Informe quantas horas essa obra durou"
-              type="number"
-              value={manpower === 0 ? "" : manpower}
-              onChange={(e) => {
-                setManpower(Number(e.target.value));
-              }}
-            />
-            <Input
-              label="Deslocamento"
-              placeholder="Informe a quantidade de visitas"
-              type="number"
-              value={displacement === 0 ? "" : displacement}
-              onChange={(e) => {
-                setDisplacement(Number(e.target.value));
-              }}
-            />
-          </div>
-          <>
-            <Button
-              type="button"
-              outline
-              color="#6558F5"
-              onClick={() => {
-                setOpenEndAnOsModal(false);
-              }}
-            >
-              Cancelar
-            </Button>
-            <div style={{ display: "flex" }}>
-              <Button
-                outline
-                type="submit"
-                color="#1AAE9F"
-                onClick={() => setCloseAndSeeDetails(true)}
-              >
-                Encerrar e ver Detalhes
-              </Button>
-              <Button style={{ marginLeft: 20 }} type="submit" color="#1AAE9F">
-                Encerrar OS
-              </Button>
-            </div>
-          </>
-        </Modal>
-      )}
-
-      {openOsDetailsModal && (
-        <Modal
-          title="Detalhes da OS"
-          handleSubmit={handleServiceOrderRegistration}
-          setOpenModal={setOpenOsDetailsModal}
-        >
-          <div>
-            <InputLine>
-              <InputWithLabelAtTheTop
-                label="Data da abertura:"
-                disabled={true}
-                value={formatDate(openingDate)}
-              />
-              <InputWithLabelAtTheTop
-                label="Data do fechamento:"
-                disabled={true}
-                value={formatDate(closingDate)}
-              />
-            </InputLine>
-            <InputLine>
-              <InputWithLabelAtTheTop
+            </>
+          </Modal>
+        )}
+        {openServiceOrderRegistrationModal && (
+          <Modal
+            title="Cadastro de Ordem de Serviço"
+            handleSubmit={handleServiceOrderRegistration}
+            setOpenModal={setOpenServiceOrderRegistrationModal}
+            style={{
+              opacity: openAddMaterialToAnSoModal || openEditModal ? 0 : 1,
+            }}
+          >
+            <div>
+              <Input
                 label="Número da OS"
-                disabled={true}
+                placeholder="Insira o número da OS"
                 value={SONumber}
+                type="number"
+                min="0"
+                onChange={(e) => {
+                  setSONumber(e.target.value);
+                }}
               />
-              <InputWithLabelAtTheTop
+              <Input
+                inputSearch
+                data={clients}
+                label="Cliente"
+                placeholder="Insira o cliente"
+                inputSearchValue={client}
+                setValue={setClient}
+              />
+              <Input
+                inputSearch
+                data={sellers}
+                label="Vendedor"
+                placeholder="Insira o nome do vendedor"
+                inputSearchValue={seller}
+                setValue={setSeller}
+              />
+              <Input
+                inputSearch
+                data={responsibleTechnicians}
+                label="Técnico Responsável"
+                placeholder="Insira o nome do técnico responsável"
+                inputSearchValue={responsibleTechnician}
+                setValue={setResponsibleTechnician}
+              />
+
+              <InputLine
+                style={{
+                  gridTemplateColumns: "1fr 2.5fr",
+                  padding: 0,
+                  gap: 60,
+                }}
+              >
+                <Label>Materiais</Label>
+                <div>
+                  <Label className="label-top">
+                    {materials.length !== 0 ? (
+                      <MyTableExcel
+                        style={{ margin: 0 }}
+                        columns={[
+                          { name: "Material" },
+                          { name: "Quantidade" },
+                          { name: "Ações" },
+                        ]}
+                      >
+                        {materials.map((material: MaterialsProps) => (
+                          <TableRow key={material.name}>
+                            <TableCell width={150} component="th" scope="row">
+                              {material.name}
+                            </TableCell>
+                            <TableCell align="left">
+                              {material.quantity}
+                            </TableCell>
+                            <TableCell align="right">
+                              <ButtonEdit
+                                onClick={() => OpenEditModal(material)}
+                              />
+                              <ButtonRemoveProduct
+                                onClick={() => removeProduct(material)}
+                              />
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </MyTableExcel>
+                    ) : (
+                      "Sem itens alocados a essa OS"
+                    )}
+                  </Label>
+                  <Button
+                    type="button"
+                    outline
+                    color="#6558F5"
+                    onClick={() => {
+                      addMaterialToAnOs();
+                    }}
+                  >
+                    <PlusCircleIcon /> Adicionar Material á OS
+                  </Button>
+                </div>
+              </InputLine>
+            </div>
+            <>
+              <Button
+                type="button"
+                outline
+                color="#6558F5"
+                onClick={() => {
+                  setOpenServiceOrderRegistrationModal(false);
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button type="submit" color="#1AAE9F">
+                Criar OS
+              </Button>
+            </>
+          </Modal>
+        )}
+
+        {openAddMaterialToAnSoModal && (
+          <Modal
+            title="Adicionar Material à uma OS"
+            handleSubmit={handleAddMaterialToAnSoModal}
+            setOpenModal={setOpenAddMaterialToAnSoModal}
+          >
+            <div>
+              <Input label="Número da OS" disabled={true} value={SONumber} />
+              <Input
                 label="Cliente"
                 disabled={true}
-                value={client?.name}
+                value={client?.name || ""}
               />
-            </InputLine>
-            <InputLine>
-              <InputWithLabelAtTheTop
-                label="Técnico"
-                disabled={true}
-                value={responsibleTechnician?.name}
+              <Input
+                inputSearch
+                noAddOption
+                data={materialsInStock}
+                label="Produto"
+                placeholder="Ex: Mangueira, Parafuso, Suporte, etc..."
+                inputSearchValue={product}
+                setValue={setProduct}
               />
-              <InputWithLabelAtTheTop
-                label="Vendedor"
-                disabled={true}
-                value={seller?.name}
-              />
-            </InputLine>
-            <InputLine>
-              <InputWithLabelAtTheTop
-                label="Mão de Obra"
-                disabled={true}
-                value={manpower}
-              />
-              <InputWithLabelAtTheTop
-                label="Deslocamento"
-                disabled={true}
-                value={displacement}
-              />
-            </InputLine>
-            <ItemsPurchasedContainer>
-              <Divisor />
-              <TitleProducts>Materiais Utilizados</TitleProducts>
-              {products.length ? (
-                <MyTableExcel
-                  columns={[
-                    { name: "Nome do Produto" },
-                    { name: "Valor Unitário" },
-                    { name: "Quantidade" },
-                    { name: "Valor Total" },
-                  ]}
-                >
-                  {products.map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell component="th" scope="row">
-                        {item.name}
-                      </TableCell>
-                      <TableCell align="left">R$ {item.value}</TableCell>
-                      <TableCell align="left">{item.quantity}</TableCell>
-                      <TableCell align="left">
-                        R$ {item.quantity * item.value}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </MyTableExcel>
-              ) : (
-                <Text>Nenhum material foi alocado a essa OS</Text>
-              )}
-            </ItemsPurchasedContainer>
-          </div>
 
-          <>
-            <Button
-              type="button"
-              outline
-              color="#6558F5"
-              onClick={() => {
-                setOpenOsDetailsModal(false);
-              }}
-            >
-              Fechar
-            </Button>
-            <div style={{ display: "flex" }}>
-              <Button
-                style={{ marginLeft: 20 }}
-                type="button"
-                onClick={() => {
-                  alert("Negociar funcionalidade (44) 9 9957-1618");
+              <Input
+                label="Quantidade"
+                placeholder="Informe a quantidade do material"
+                type="number"
+                value={quantity === 0 ? "" : quantity}
+                min="0"
+                onChange={(e) => {
+                  setQuantity(Number(e.target.value));
                 }}
-                color="#1AAE9F"
+              />
+            </div>
+            <>
+              <Button
+                type="button"
+                outline
+                color="#6558F5"
+                onClick={() => {
+                  setOpenAddMaterialToAnSoModal(false);
+                }}
               >
-                Editar
+                Voltar para OS
               </Button>
-              <a
-                href={`/print/${id}`}
-                rel="noreferrer"
-                target="_blank"
-                style={{ textDecoration: "none" }}
-              >
+              <div style={{ display: "flex" }}>
                 <Button
-                  type="button"
+                  outline
+                  type="submit"
+                  color="#1AAE9F"
+                  onClick={() => {
+                    setAddMaterialAndClose(false);
+                  }}
+                >
+                  Salvar e Adicionar Mais itens
+                </Button>
+                <Button
                   style={{ marginLeft: 20 }}
+                  type="submit"
+                  color="#1AAE9F"
+                  onClick={() => {
+                    setAddMaterialAndClose(true);
+                  }}
+                >
+                  Adicionar Material
+                </Button>
+              </div>
+            </>
+          </Modal>
+        )}
+
+        {openReturnAMaterialFromAnOsModal && (
+          <Modal
+            title="Retornar o Material à uma OS"
+            handleSubmit={handleReturnServiceOrder}
+            setOpenModal={setOpenReturnAMaterialFromAnOsModal}
+          >
+            <div>
+              <Input label="Número da OS" disabled={true} value={SONumber} />
+              <Input label="Cliente" disabled={true} value={client?.name} />
+              <Input
+                inputSearch
+                noAddOption
+                data={materialsInSO}
+                label="Produto"
+                placeholder="Ex: Mangueira, Parafuso, Suporte, etc..."
+                inputSearchValue={product}
+                setValue={setProduct}
+              />
+              <Input
+                label="Quantidade"
+                placeholder="Informe a quantidade do material"
+                type="number"
+                value={quantity === 0 ? "" : quantity}
+                min="0"
+                onChange={(e) => {
+                  setQuantity(Number(e.target.value));
+                }}
+              />
+            </div>
+            <>
+              <Button
+                type="button"
+                outline
+                color="#6558F5"
+                onClick={() => {
+                  setOpenReturnAMaterialFromAnOsModal(false);
+                }}
+              >
+                Cancelar
+              </Button>
+              <div style={{ display: "flex" }}>
+                <Button outline type="submit" color="#1AAE9F">
+                  Salvar e Adicionar Mais itens
+                </Button>
+                <Button
+                  style={{ marginLeft: 20 }}
+                  type="submit"
                   color="#1AAE9F"
                 >
-                  Imprimir OS
+                  Salvar
                 </Button>
-              </a>
+              </div>
+            </>
+          </Modal>
+        )}
+
+        {openEndAnOsModal && (
+          <Modal
+            title="Encerrar uma OS"
+            handleSubmit={handleEndAnOSSubmit}
+            setOpenModal={setOpenEndAnOsModal}
+          >
+            <div>
+              <Input label="Número da OS" disabled={true} value={SONumber} />
+              <Input label="Cliente" disabled={true} value={client?.name} />
+              <Input
+                label="Mão de obra"
+                placeholder="Informe quantas horas essa obra durou"
+                type="number"
+                value={manpower === 0 ? "" : manpower}
+                onChange={(e) => {
+                  setManpower(Number(e.target.value));
+                }}
+              />
+              <Input
+                label="Deslocamento"
+                placeholder="Informe a quantidade de visitas"
+                type="number"
+                value={displacement === 0 ? "" : displacement}
+                onChange={(e) => {
+                  setDisplacement(Number(e.target.value));
+                }}
+              />
             </div>
-          </>
-        </Modal>
-      )}
-      <Header>
-        <InputWithLabelAtTheTop
-          label="Pesquisar"
-          placeholder="Cliente, número ou vendedor"
-        />
-        <Button
-          color="#1AAE9F"
-          onClick={() => {
-            setOpenServiceOrderRegistrationModal(true);
-          }}
-        >
-          <PlusIcon /> Nova OS
-        </Button>
-      </Header>
-      <Section>
-        <Title>Em execução:</Title>
-        <MyTableExcel
-          style={{ margin: 0 }}
-          columns={[
-            { name: "Número da OS" },
-            { name: "Cliente" },
-            { name: "Vendedor" },
-            { name: "Técnico" },
-            { name: "Custo da OS" },
-            { name: "Ações", align: "right" },
-          ]}
-        >
-          {SORunning.length !== 0 &&
-            SORunning.map((so: SOProps) => (
-              <TableRow key={so.id}>
-                <TableCell width={150} component="th" scope="row">
-                  {so.SONumber}
-                </TableCell>
-                <TableCell align="left">{so.client}</TableCell>
-                <TableCell align="left">{so.seller}</TableCell>
-                <TableCell align="left">{so.responsibleTechnician}</TableCell>
-                <TableCell align="left">R$ {so.costOfSO}</TableCell>
-                <TableCell align="right" width={160}>
-                  <ButtonWithIcon
-                    Icon={IoKey}
-                    onClick={() => {
-                      closeOS(so.id);
-                    }}
-                  />
-                  <ButtonWithIcon
-                    Icon={ImBoxAdd}
-                    onClick={() => {
-                      openAddAMaterialFromAnOs(so);
-                    }}
-                  />
-                  <ButtonWithIcon
-                    Icon={ImBoxRemove}
-                    onClick={() => {
-                      openReturnAMaterialFromAnOs(so);
-                    }}
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
-          {SORunning.length < 6 &&
-            Array(6 - SORunning.length)
-              .fill("")
-              .map((so) => (
-                <TableRow>
-                  <TableCell
-                    style={{ opacity: 0 }}
-                    width={150}
-                    component="th"
-                    scope="row"
+            <>
+              <Button
+                type="button"
+                outline
+                color="#6558F5"
+                onClick={() => {
+                  setOpenEndAnOsModal(false);
+                }}
+              >
+                Cancelar
+              </Button>
+              <div style={{ display: "flex" }}>
+                <Button
+                  outline
+                  type="submit"
+                  color="#1AAE9F"
+                  onClick={() => setCloseAndSeeDetails(true)}
+                >
+                  Encerrar e ver Detalhes
+                </Button>
+                <Button
+                  style={{ marginLeft: 20 }}
+                  type="submit"
+                  color="#1AAE9F"
+                >
+                  Encerrar OS
+                </Button>
+              </div>
+            </>
+          </Modal>
+        )}
+
+        {openOsDetailsModal && (
+          <Modal
+            title="Detalhes da OS"
+            handleSubmit={handleServiceOrderRegistration}
+            setOpenModal={setOpenOsDetailsModal}
+          >
+            <div>
+              <InputLine>
+                <InputWithLabelAtTheTop
+                  label="Data da abertura:"
+                  disabled={true}
+                  value={formatDate(openingDate)}
+                />
+                <InputWithLabelAtTheTop
+                  label="Data do fechamento:"
+                  disabled={true}
+                  value={formatDate(closingDate)}
+                />
+              </InputLine>
+              <InputLine>
+                <InputWithLabelAtTheTop
+                  label="Número da OS"
+                  disabled={true}
+                  value={SONumber}
+                />
+                <InputWithLabelAtTheTop
+                  label="Cliente"
+                  disabled={true}
+                  value={client?.name}
+                />
+              </InputLine>
+              <InputLine>
+                <InputWithLabelAtTheTop
+                  label="Técnico"
+                  disabled={true}
+                  value={responsibleTechnician?.name}
+                />
+                <InputWithLabelAtTheTop
+                  label="Vendedor"
+                  disabled={true}
+                  value={seller?.name}
+                />
+              </InputLine>
+              <InputLine>
+                <InputWithLabelAtTheTop
+                  label="Mão de Obra"
+                  disabled={true}
+                  value={manpower}
+                />
+                <InputWithLabelAtTheTop
+                  label="Deslocamento"
+                  disabled={true}
+                  value={displacement}
+                />
+              </InputLine>
+              <ItemsPurchasedContainer>
+                <Divisor />
+                <TitleProducts>Materiais Utilizados</TitleProducts>
+                {products.length ? (
+                  <MyTableExcel
+                    columns={[
+                      { name: "Nome do Produto" },
+                      { name: "Valor Unitário" },
+                      { name: "Quantidade" },
+                      { name: "Valor Total" },
+                    ]}
                   >
-                    None
+                    {products.map((item) => (
+                      <TableRow key={item.id}>
+                        <TableCell component="th" scope="row">
+                          {item.name}
+                        </TableCell>
+                        <TableCell align="left">R$ {item.value}</TableCell>
+                        <TableCell align="left">{item.quantity}</TableCell>
+                        <TableCell align="left">
+                          R$ {item.quantity * item.value}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </MyTableExcel>
+                ) : (
+                  <Text>Nenhum material foi alocado a essa OS</Text>
+                )}
+              </ItemsPurchasedContainer>
+            </div>
+
+            <>
+              <Button
+                type="button"
+                outline
+                color="#6558F5"
+                onClick={() => {
+                  setOpenOsDetailsModal(false);
+                }}
+              >
+                Fechar
+              </Button>
+              <div style={{ display: "flex" }}>
+                <Button
+                  style={{ marginLeft: 20 }}
+                  type="button"
+                  onClick={() => {
+                    alert("Negociar funcionalidade (44) 9 9957-1618");
+                  }}
+                  color="#1AAE9F"
+                >
+                  Editar
+                </Button>
+                <a
+                  href={`/print/${id}`}
+                  rel="noreferrer"
+                  target="_blank"
+                  style={{ textDecoration: "none" }}
+                >
+                  <Button
+                    type="button"
+                    style={{ marginLeft: 20 }}
+                    color="#1AAE9F"
+                  >
+                    Imprimir OS
+                  </Button>
+                </a>
+              </div>
+            </>
+          </Modal>
+        )}
+
+        <Header>
+          <InputWithLabelAtTheTop
+            label="Pesquisar"
+            placeholder="Cliente, número ou vendedor"
+          />
+          <Button
+            color="#1AAE9F"
+            onClick={() => {
+              setOpenServiceOrderRegistrationModal(true);
+            }}
+          >
+            <PlusIcon /> Nova OS
+          </Button>
+        </Header>
+        <Section>
+          <Title>Em execução:</Title>
+          {SORunning.length !== 0 ? (
+            <MyTableExcel
+              style={{ margin: 0 }}
+              columns={[
+                { name: "Número da OS" },
+                { name: "Cliente" },
+                { name: "Vendedor" },
+                { name: "Técnico" },
+                { name: "Custo da OS" },
+                { name: "Ações", align: "right" },
+              ]}
+            >
+              {SORunning.map((so: SOProps) => (
+                <TableRow key={so.id}>
+                  <TableCell width={150} component="th" scope="row">
+                    {so.SONumber}
                   </TableCell>
-                  <TableCell style={{ opacity: 0 }} align="left">
-                    None
-                  </TableCell>
-                  <TableCell style={{ opacity: 0 }} align="left">
-                    None
-                  </TableCell>
-                  <TableCell style={{ opacity: 0 }} align="left">
-                    None
-                  </TableCell>
-                  <TableCell style={{ opacity: 0 }} align="left">
-                    None
-                  </TableCell>
-                  <TableCell style={{ opacity: 0 }} align="right" width={160}>
+                  <TableCell align="left">{so.client}</TableCell>
+                  <TableCell align="left">{so.seller}</TableCell>
+                  <TableCell align="left">{so.responsibleTechnician}</TableCell>
+                  <TableCell align="left">R$ {so.costOfSO}</TableCell>
+                  <TableCell align="right" width={160}>
                     <ButtonWithIcon
-                      Icon={FiCoffee}
-                      style={{ cursor: "default" }}
+                      Icon={IoKey}
+                      onClick={() => {
+                        closeOS(so.id);
+                      }}
                     />
                     <ButtonWithIcon
-                      Icon={FiCoffee}
-                      style={{ cursor: "default" }}
+                      Icon={ImBoxAdd}
+                      onClick={() => {
+                        openAddAMaterialFromAnOs(so);
+                      }}
+                    />
+                    <ButtonWithIcon
+                      Icon={ImBoxRemove}
+                      onClick={() => {
+                        openReturnAMaterialFromAnOs(so);
+                      }}
                     />
                   </TableCell>
                 </TableRow>
               ))}
-        </MyTableExcel>
-      </Section>
-      <Section>
-        <Title>Obras concluidas:</Title>
-        <MyTableExcel
-          style={{ margin: 0 }}
-          columns={[
-            { name: "Número da OS" },
-            { name: "Cliente" },
-            { name: "Vendedor" },
-            { name: "Técnico" },
-            { name: "Custo da OS" },
-            { name: "Ações", align: "right" },
-          ]}
-        >
-          {SOCompleted.length !== 0 &&
-            SOCompleted.map((so: SOProps) => (
-              <TableRow key={so.id}>
-                <TableCell width={150} component="th" scope="row">
-                  {so.SONumber}
-                </TableCell>
-                <TableCell align="left">{so.client}</TableCell>
-                <TableCell align="left">{so.seller}</TableCell>
-                <TableCell align="left">{so.responsibleTechnician}</TableCell>
-                <TableCell align="left">R$ {so.costOfSO}</TableCell>
-                <TableCell align="right" width={160}>
-                  <ButtonWithIcon
-                    Icon={FaLockOpen}
-                    onClick={() => {
-                      openOS(so.id);
-                    }}
-                  />
-                  <ButtonWithIcon
-                    Icon={FaLock}
-                    onClick={() => {
-                      openEndAnOs(so);
-                    }}
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
-          {SOCompleted.length < 6 &&
-            Array(6 - SOCompleted.length)
-              .fill("")
-              .map((so) => (
-                <TableRow>
-                  <TableCell
-                    style={{ opacity: 0 }}
-                    width={150}
-                    component="th"
-                    scope="row"
-                  >
-                    None
+            </MyTableExcel>
+          ) : (
+            <p style={{ marginTop: 20, fontWeight: 500 }}>
+              Sem obras em execução
+            </p>
+          )}
+        </Section>
+        <Section>
+          <Title>Obras concluidas:</Title>
+          {SOCompleted.length !== 0 ? (
+            <MyTableExcel
+              style={{ margin: 0 }}
+              columns={[
+                { name: "Número da OS" },
+                { name: "Cliente" },
+                { name: "Vendedor" },
+                { name: "Técnico" },
+                { name: "Custo da OS" },
+                { name: "Ações", align: "right" },
+              ]}
+            >
+              {SOCompleted.map((so: SOProps) => (
+                <TableRow key={so.id}>
+                  <TableCell width={150} component="th" scope="row">
+                    {so.SONumber}
                   </TableCell>
-                  <TableCell style={{ opacity: 0 }} align="left">
-                    None
-                  </TableCell>
-                  <TableCell style={{ opacity: 0 }} align="left">
-                    None
-                  </TableCell>
-                  <TableCell style={{ opacity: 0 }} align="left">
-                    None
-                  </TableCell>
-                  <TableCell style={{ opacity: 0 }} align="left">
-                    None
-                  </TableCell>
-                  <TableCell
-                    style={{
-                      opacity: 0,
-                    }}
-                    align="right"
-                    width={160}
-                  >
+                  <TableCell align="left">{so.client}</TableCell>
+                  <TableCell align="left">{so.seller}</TableCell>
+                  <TableCell align="left">{so.responsibleTechnician}</TableCell>
+                  <TableCell align="left">R$ {so.costOfSO}</TableCell>
+                  <TableCell align="right" width={160}>
                     <ButtonWithIcon
-                      Icon={FiCoffee}
-                      style={{ cursor: "default" }}
+                      Icon={FaLockOpen}
+                      onClick={() => {
+                        openOS(so.id);
+                      }}
                     />
                     <ButtonWithIcon
-                      Icon={FiCoffee}
-                      style={{ cursor: "default" }}
+                      Icon={FaLock}
+                      onClick={() => {
+                        openEndAnOs(so);
+                      }}
                     />
                   </TableCell>
                 </TableRow>
               ))}
-        </MyTableExcel>
-      </Section>
-      <Section>
-        <Title>Os Encerradas:</Title>
-        <MyTableExcel
-          style={{ margin: 0 }}
-          columns={[
-            { name: "Número da OS" },
-            { name: "Cliente" },
-            { name: "Vendedor" },
-            { name: "Técnico" },
-            { name: "Custo da OS" },
-            { name: "Ações", align: "right" },
-          ]}
-        >
-          {SOClosed.length !== 0 &&
-            SOClosed.map((so: SOProps) => (
-              <TableRow key={so.id}>
-                <TableCell width={150} component="th" scope="row">
-                  {so.SONumber}
-                </TableCell>
-                <TableCell align="left">{so.client}</TableCell>
-                <TableCell align="left">{so.seller}</TableCell>
-                <TableCell align="left">{so.responsibleTechnician}</TableCell>
-                <TableCell align="left">R$ {so.costOfSO}</TableCell>
-                <TableCell align="right" width={160}>
-                  <ButtonWithIcon
-                    Icon={MdViewHeadline}
-                    onClick={() => {
-                      openOsDetails(so);
-                    }}
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
-          {SOClosed.length < 6 &&
-            Array(6 - SOClosed.length)
-              .fill("")
-              .map((so) => (
-                <TableRow>
-                  <TableCell
-                    style={{ opacity: 0 }}
-                    width={150}
-                    component="th"
-                    scope="row"
-                  >
-                    None
+            </MyTableExcel>
+          ) : (
+            <p style={{ marginTop: 20, fontWeight: 500 }}>
+              Sem obras concluidas
+            </p>
+          )}
+        </Section>
+        <Section>
+          <Title>Os Encerradas:</Title>
+          {SOClosed.length !== 0 ? (
+            <MyTableExcel
+              style={{ margin: 0 }}
+              columns={[
+                { name: "Número da OS" },
+                { name: "Cliente" },
+                { name: "Vendedor" },
+                { name: "Técnico" },
+                { name: "Custo da OS" },
+                { name: "Ações", align: "right" },
+              ]}
+            >
+              {SOClosed.map((so: SOProps) => (
+                <TableRow key={so.id}>
+                  <TableCell width={150} component="th" scope="row">
+                    {so.SONumber}
                   </TableCell>
-                  <TableCell style={{ opacity: 0 }} align="left">
-                    None
-                  </TableCell>
-                  <TableCell style={{ opacity: 0 }} align="left">
-                    None
-                  </TableCell>
-                  <TableCell style={{ opacity: 0 }} align="left">
-                    None
-                  </TableCell>
-                  <TableCell style={{ opacity: 0 }} align="left">
-                    None
-                  </TableCell>
-                  <TableCell style={{ opacity: 0 }} align="right" width={160}>
+                  <TableCell align="left">{so.client}</TableCell>
+                  <TableCell align="left">{so.seller}</TableCell>
+                  <TableCell align="left">{so.responsibleTechnician}</TableCell>
+                  <TableCell align="left">R$ {so.costOfSO}</TableCell>
+                  <TableCell align="right" width={160}>
                     <ButtonWithIcon
-                      Icon={FiCoffee}
-                      style={{ cursor: "default" }}
-                    />
-                    <ButtonWithIcon
-                      Icon={FiCoffee}
-                      style={{ cursor: "default" }}
+                      Icon={MdViewHeadline}
+                      onClick={() => {
+                        openOsDetails(so);
+                      }}
                     />
                   </TableCell>
                 </TableRow>
               ))}
-        </MyTableExcel>
-      </Section>
-    </Container>
+            </MyTableExcel>
+          ) : (
+            <p style={{ marginTop: 20, fontWeight: 500 }}>
+              Sem obras encerradas
+            </p>
+          )}
+        </Section>
+      </Container>
+    </>
   );
 };
 

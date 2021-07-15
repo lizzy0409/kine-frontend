@@ -1,9 +1,18 @@
 import styled from "styled-components";
 import { FiPlusCircle } from "react-icons/fi";
 
-export const Wrapper = styled.div`
+interface SidebarOpen {
+  open: boolean;
+}
+
+interface WrapperProps extends SidebarOpen {}
+
+export const Wrapper = styled.div<WrapperProps>`
   background-color: #dfe6ed;
   min-height: 100vh;
+  padding-left: ${({ open }) => (open ? "300px" : "0px")};
+
+  transition: padding-left 0.5s;
 `;
 
 export const InputLine = styled.div`

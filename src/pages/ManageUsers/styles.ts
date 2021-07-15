@@ -1,9 +1,19 @@
 import styled from "styled-components";
 
-export const Container = styled.div`
+interface SidebarOpen {
+  open: boolean;
+}
+
+interface ContainerProps extends SidebarOpen {}
+
+export const Container = styled.div<ContainerProps>`
   min-height: 100vh;
   background-color: #dfe6ed;
   padding: 120px 30px;
+
+  padding-left: ${({ open }) => (open ? "330px" : "30px")};
+
+  transition: padding-left 0.5s;
 `;
 
 export const Section = styled.section`

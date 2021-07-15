@@ -50,6 +50,8 @@ interface Teste {
 }
 
 const Home: React.FC = () => {
+  const { open } = useContext(SideBarContext);
+
   const [openEditModal, setOpenEditModal] = useState(false);
   const [id, setId] = useState("");
 
@@ -343,7 +345,7 @@ const Home: React.FC = () => {
   return (
     <>
       <Header pageName={"Início"} />
-      <Wrapper>
+      <Wrapper open={open}>
         {openEditModal && (
           <Modal
             title="Editar Produto"

@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Header from "../../components/Header";
 import Table from "../../components/Table";
+import { SideBarContext } from "../../contexts/SideBarContext";
 import api from "../../services/api";
 
 import { Container, Section, Title } from "./styles";
@@ -14,6 +15,8 @@ interface IUser {
 }
 
 const ManageUsers: React.FC = () => {
+  const { open } = useContext(SideBarContext);
+
   const [usersAwaitingApproval, setUsersAwaitingApproval] = useState<IUser[]>(
     []
   );
@@ -48,7 +51,7 @@ const ManageUsers: React.FC = () => {
     <>
       <Header pageName="Gerenciar Usuários" />
 
-      <Container>
+      <Container open={open}>
         <Section>
           <Title>Usuários aguardando aprovação:</Title>
           <Table
