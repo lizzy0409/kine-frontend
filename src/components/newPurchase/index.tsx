@@ -210,6 +210,10 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
       setCostCenterDisabled(true);
       setCostCenter({ name: data[0].costCenter });
       setUnitOfMeasure({ name: data[0].unitOfMeasure });
+    } else {
+      setCostCenterDisabled(false);
+      setCostCenter({ name: "" });
+      setUnitOfMeasure({ name: "" });
     }
   };
 
@@ -341,7 +345,7 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
               placeholder="Selecione a Categoria do Produto"
               inputSearchValue={costCenter}
               setValue={setCostCenter}
-              disabled={true}
+              disabled={costCenterDisabled}
             />
           </div>
           <>
