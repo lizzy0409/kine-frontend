@@ -95,6 +95,7 @@ const Home: React.FC = () => {
   const [materialsInSO, setMaterialsInSO] = useState<Teste[]>([]);
 
   const [addMaterialAndClose, setAddMaterialAndClose] = useState(false);
+  const [returnMaterialAndClose, setReturnMaterialAndClose] = useState(false);
 
   function clearInputs() {
     setSONumber("");
@@ -272,7 +273,14 @@ const Home: React.FC = () => {
         quantity,
       };
       await api.post("/return-material", material);
-      setOpenReturnAMaterialFromAnOsModal(false);
+      alert("Material retornou ao estoque!")
+      if (returnMaterialAndClose) {
+        setOpenReturnAMaterialFromAnOsModal(false);
+      } else {
+        setProduct(null);
+        setQuantity(0);
+        setOpenReturnAMaterialFromAnOsModal(true);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -648,13 +656,23 @@ const Home: React.FC = () => {
                 Cancelar
               </Button>
               <div style={{ display: "flex" }}>
-                <Button outline type="submit" color="#1AAE9F">
-                  Salvar e Adicionar Mais itens
+                <Button
+                  outline
+                  type="submit"
+                  color="#1AAE9F"
+                  onClick={() => {
+                    setReturnMaterialAndClose(false);
+                  }}
+                >
+                  Salvar e retornar mais itens ao estoque
                 </Button>
                 <Button
                   style={{ marginLeft: 20 }}
                   type="submit"
                   color="#1AAE9F"
+                  onClick={() => {
+                    setReturnMaterialAndClose(true);
+                  }}
                 >
                   Salvar
                 </Button>
