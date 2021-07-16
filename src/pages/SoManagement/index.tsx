@@ -912,7 +912,7 @@ const SoManagement = () => {
                   Editar
                 </Button>
                 <a
-                  href={`/print/${id}`}
+                  href={`/imprimir/${id}`}
                   rel="noreferrer"
                   target="_blank"
                   style={{ textDecoration: "none" }}

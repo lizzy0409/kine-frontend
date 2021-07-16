@@ -21,7 +21,7 @@ const Routes: React.FC = () => {
           <Route path="/gerenciar-usuarios" component={ManageUsers} />
           <Route exact path="/estoque-atual" component={CurrentStock} />
           <Route exact path="/gestao-de-os" component={SoManagement} />
-          <Route exact path="/print/:id" component={Print} />
+          <Route exact path="/imprimir/:id" component={Print} />
         </Switch>
       </BrowserRouter>
     </>
