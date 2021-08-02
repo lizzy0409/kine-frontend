@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
 
-import Modal from "../../components/Modal";
-
 import InputWithLabelAtTheTop from "../../components/InputWithLabelAtTheTop";
 
 import TableRow from "@material-ui/core/TableRow";
@@ -79,6 +77,7 @@ const Print = () => {
 
   useEffect(() => {
     openOsDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

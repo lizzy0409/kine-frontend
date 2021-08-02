@@ -8,15 +8,6 @@ import Paper from "@material-ui/core/Paper";
 
 import { TableContainer } from "./styles";
 
-interface IData {
-  id: string;
-  name: string;
-  value: number;
-  quantity: number;
-  unitOfMeasure: string;
-  costCenter: string;
-}
-
 interface IColumns {
   name: string;
   align?: "left" | "right";

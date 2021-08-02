@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import InputSearch from "../InputSearch";
 
 export const InputContainer = styled.div`
   display: grid;

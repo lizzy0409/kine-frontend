@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import api from "../../services/api";
-import Button from "../Button";
 
 import {
   Container,
@@ -13,11 +12,6 @@ import {
   RightContainer,
   StockSize,
 } from "./styles";
-
-interface Teste {
-  inputValue?: string;
-  name: string;
-}
 
 interface ProductProps {
   id: string;
