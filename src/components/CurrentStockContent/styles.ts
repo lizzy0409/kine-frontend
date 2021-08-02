@@ -8,6 +8,11 @@ export const Container = styled.div`
   overflow-y: auto;
   max-height: calc((100vh - 100px) - 77px);
   padding: 24px;
+
+  @media (max-width: 550px) {
+    padding: 0;
+    font-size: 14px;
+  }
 `;
 export const ProductsTable = styled.div``;
 export const Product = styled.div`
@@ -20,6 +25,10 @@ export const Product = styled.div`
 
   border-bottom: 2px solid #9eadba;
   padding: 10px;
+
+  @media (max-width: 550px) {
+    grid-template-columns: 40px 1fr 2fr 1fr;
+  }
 `;
 
 export const Number = styled.span``;
@@ -29,6 +38,7 @@ export const GraphContainer = styled.div`
   border-radius: 5px;
   background-color: #d8dee3;
   position: relative;
+  margin: 0 10px;
 `;
 export const GraphContent = styled.div<GraphProps>`
   width: ${({ percent }) => percent}%;

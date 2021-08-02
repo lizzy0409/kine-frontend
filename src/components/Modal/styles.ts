@@ -25,6 +25,11 @@ export const Container = styled.form`
   background-color: #fff;
 
   border: 3px solid #c3cfd9;
+
+  @media (max-width: 700px) {
+    width: 100vw;
+    height: 100vh;
+  }
 `;
 
 export const Header = styled.div`
@@ -36,6 +41,9 @@ export const Header = styled.div`
 `;
 export const Title = styled.h1`
   font-size: 20px;
+  @media (max-width: 550px) {
+    font-size: 15px;
+  }
 `;
 export const CloseIcon = styled(IoCloseSharp)`
   color: #4b5c6b;
