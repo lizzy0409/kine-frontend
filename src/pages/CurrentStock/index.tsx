@@ -21,10 +21,6 @@ interface TabPanelProps {
   value: any;
 }
 
-interface Teste {
-  inputValue?: string;
-  name: string;
-}
 interface ProductProps {
   id: string;
   name: string;

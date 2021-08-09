@@ -27,12 +27,32 @@ export const Left = styled.div`
   color: #c3cfd9;
   font-weight: 700;
   cursor: pointer;
+
+  @media (max-width: 550px) {
+    font-size: 12px;
+  }
 `;
 export const Middle = styled.h1`
   color: #293845;
   font-size: 28px;
+  text-align: center;
+
+  @media (max-width: 650px) {
+    font-size: 22px;
+  }
+
+  @media (max-width: 550px) {
+    font-size: 20px;
+  }
+
+  @media (max-width: 450px) {
+    font-size: 16px;
+  }
 `;
 
 export const Right = styled.img`
   width: 100px;
+  @media (max-width: 550px) {
+    width: 80px;
+  }
 `;

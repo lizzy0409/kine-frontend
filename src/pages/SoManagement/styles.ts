@@ -15,7 +15,9 @@ export const Container = styled.div<ContainerProps>`
   max-width: 100vw;
   background-color: #dfe6ed;
 
-  padding-left: ${({ open }) => (open ? "330px" : "30px")};
+  @media (min-width: 550px) {
+    padding-left: ${({ open }) => (open ? "300px" : "0px")};
+  }
 
   transition: padding-left 0.5s;
 `;
@@ -41,10 +43,15 @@ export const Header = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 20px;
 
   margin: 0 auto;
   max-width: 1200px;
   width: 100%;
+
+  & button {
+    margin-top: -10px;
+  }
 `;
 
 export const PlusIcon = styled(FiPlus)`

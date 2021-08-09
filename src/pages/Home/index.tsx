@@ -273,7 +273,7 @@ const Home: React.FC = () => {
         quantity,
       };
       await api.post("/return-material", material);
-      alert("Material retornou ao estoque!")
+      alert("Material retornou ao estoque!");
       if (returnMaterialAndClose) {
         setOpenReturnAMaterialFromAnOsModal(false);
       } else {
@@ -664,7 +664,7 @@ const Home: React.FC = () => {
                     setReturnMaterialAndClose(false);
                   }}
                 >
-                  Salvar e retornar mais itens ao estoque
+                  Salvar e retornar mais itens
                 </Button>
                 <Button
                   style={{ marginLeft: 20 }}

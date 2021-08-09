@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import InputSearch from "../InputSearch";
 
 export const InputContainer = styled.div`
   display: grid;
@@ -11,10 +10,14 @@ export const InputContainer = styled.div`
 `;
 export const Label = styled.label`
   text-align: center;
+  @media (max-width: 550px) {
+    font-size: 14px;
+  }
 `;
 
 export const InputStyled = styled.input`
   height: 40px;
+  width: 100%;
 
   border: 2px solid #c5ced6;
   border-radius: 5px;

@@ -13,7 +13,9 @@ export const Container = styled.div<ContainerProps>`
   padding-bottom: 20px;
   background-color: #dfe6ed;
 
-  padding-left: ${({ open }) => (open ? "300px" : "0px")};
+  @media (min-width: 550px) {
+    padding-left: ${({ open }) => (open ? "300px" : "0px")};
+  }
 
   transition: padding-left 0.5s;
 `;

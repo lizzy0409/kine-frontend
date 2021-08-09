@@ -24,6 +24,7 @@ export const Container = styled.div<ContainerProps>`
   top: 0;
   width: 300px;
   height: 100%;
+  max-height: 100vh;
   z-index: 1;
 
   transition: left 0.5s;
@@ -131,6 +132,10 @@ export const InputLine = styled.div`
 
 export const Label = styled.label`
   text-align: center;
+
+  @media (max-width: 550px) {
+    font-size: 14px;
+  }
 
   &.label-top {
     font-size: 15px;

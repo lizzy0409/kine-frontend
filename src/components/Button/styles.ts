@@ -26,6 +26,11 @@ export const Container = styled.button<ContainerProps>`
   border-radius: 5px;
   cursor: pointer;
 
+  @media (max-width: 550px) {
+    font-size: 14px;
+    padding: 0 5px;
+  }
+
   &:disabled {
     background-color: #c9ced2;
     color: #fff;

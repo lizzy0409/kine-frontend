@@ -10,9 +10,12 @@ interface WrapperProps extends SidebarOpen {}
 export const Wrapper = styled.div<WrapperProps>`
   background-color: #dfe6ed;
   min-height: 100vh;
-  padding-left: ${({ open }) => (open ? "300px" : "0px")};
 
   transition: padding-left 0.5s;
+
+  @media (min-width: 550px) {
+    padding-left: ${({ open }) => (open ? "300px" : "0px")};
+  }
 `;
 
 export const InputLine = styled.div`
@@ -25,6 +28,10 @@ export const InputLine = styled.div`
 
 export const Label = styled.label`
   text-align: center;
+
+  @media (max-width: 550px) {
+    font-size: 14px;
+  }
 
   &.label-top {
     font-size: 15px;

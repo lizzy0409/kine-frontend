@@ -597,7 +597,7 @@ const Sidebar: React.FC = () => {
                   Início
                 </MenuItem>
                 <MenuItem
-                  to="/gestao-de-os"
+                  to="#"
                   active={activePage === 1}
                   onClick={() => {
                     setOpenServiceOrderRegistrationModal(true);

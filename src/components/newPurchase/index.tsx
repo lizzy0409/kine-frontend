@@ -229,6 +229,7 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
 
   useEffect(() => {
     getProductDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name]);
 
   return (

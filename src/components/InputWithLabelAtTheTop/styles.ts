@@ -12,6 +12,7 @@ export const Label = styled.h1`
 `;
 export const InputStyled = styled.input`
   height: 40px;
+  width: 100%;
 
   border: 2px solid #c5ced6;
   border-radius: 5px;
