@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Container, OpenMenuIcon, Left, Middle, Right } from "./styles";
 
-import GoogleLogo from "../../assets/google.png";
+import HeaderLogo from "../../assets/logoKine.png";
 import { SideBarContext } from "../../contexts/SideBarContext";
 
 interface HeaderProps {
@@ -16,7 +16,7 @@ const Header: React.FC<HeaderProps> = ({ pageName }) => {
         <OpenMenuIcon /> Abrir menu
       </Left>
       <Middle>{pageName}</Middle>
-      <Right src={GoogleLogo} />
+      <Right src={HeaderLogo} />
     </Container>
   );
 };
