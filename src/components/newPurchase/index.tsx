@@ -59,8 +59,9 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
   const [costCenters, setCostCenters] = useState<Teste[]>([]);
 
   const [id, setId] = useState("");
-  const [totalPurchaseAmount, setTotalPurchaseAmount] =
-    useState<number | string>("");
+  const [totalPurchaseAmount, setTotalPurchaseAmount] = useState<
+    number | string
+  >("");
   const [value, setValue] = useState<number | string>("");
   const [quantity, setQuantity] = useState<number>(0);
 
@@ -377,8 +378,8 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
             setValue={setSupplier}
           />
           <Input
-            label="Valor Total da Compra"
-            placeholder="Informe o valor total da compra"
+            label="Valor total da Nota Fiscal"
+            placeholder="Informe o valor total da nota fiscal"
             onBlur={() => {
               setTotalPurchaseAmount(Number(totalPurchaseAmount).toFixed(2));
             }}
