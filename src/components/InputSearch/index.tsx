@@ -89,7 +89,7 @@ const InputSearch: React.FC<InputSeach> = ({
         if (params.inputValue !== "") {
           filtered.push({
             inputValue: params.inputValue,
-            name: `Add "${params.inputValue}"`,
+            name: `Adicionar: "${params.inputValue}"`,
           });
         }
 
