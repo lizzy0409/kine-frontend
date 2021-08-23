@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useContext, useState } from "react";
 
 import CardForm from "../../components/CardForm";
 import AvatarImage from "../../assets/user.png";
@@ -14,9 +14,13 @@ import {
   Input,
 } from "./styles";
 import api from "../../services/api";
+import { AuthContext } from "../../contexts/AuthContext";
 
 const Register: React.FC = () => {
   const history = useHistory();
+
+  const { handleRegister } = useContext(AuthContext);
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,16 +38,17 @@ const Register: React.FC = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    const { data } = await api.post("/users", {
+    handleRegister({
       name,
       email,
       password,
       avatarUrl,
       awaitingApproval: true,
+    }).then((authorized) => {
+      if (authorized) {
+        history.push("/");
+      }
     });
-    localStorage.setItem("@kine:id", data.id);
-
-    history.push("/");
   };
 
   return (

@@ -3,13 +3,16 @@ import GlobalStyle from "./styles/GlobalStyle";
 
 import Routes from "./routes";
 import SideBarProvider from "./contexts/SideBarContext";
+import AuthProvider from "./contexts/AuthContext";
 
 const App: React.FC = () => {
   return (
-    <SideBarProvider>
-      <Routes />
-      <GlobalStyle />
-    </SideBarProvider>
+    <AuthProvider>
+      <SideBarProvider>
+        <Routes />
+        <GlobalStyle />
+      </SideBarProvider>
+    </AuthProvider>
   );
 };
 

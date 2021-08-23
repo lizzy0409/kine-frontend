@@ -59,8 +59,9 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
   const [costCenters, setCostCenters] = useState<Teste[]>([]);
 
   const [id, setId] = useState("");
-  const [totalPurchaseAmount, setTotalPurchaseAmount] =
-    useState<number | string>("");
+  const [totalPurchaseAmount, setTotalPurchaseAmount] = useState<
+    number | string
+  >("");
   const [value, setValue] = useState<number | string>("");
   const [quantity, setQuantity] = useState<number>(0);
 

@@ -3,19 +3,28 @@ import React, { FormEvent, useState } from "react";
 import CardForm from "../../components/CardForm";
 import api from "../../services/api";
 
+import { useHistory } from "react-router-dom";
+
 import { InputBlock, Input } from "./styles";
+import { useContext } from "react";
+import { AuthContext } from "../../contexts/AuthContext";
 
 const Login: React.FC = () => {
+  const history = useHistory();
+
+  const { handleLogin } = useContext(AuthContext);
+
   const [email, SetEmail] = useState("");
   const [password, SetPassword] = useState("");
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    try {
-      await api.post("/login", { email, password });
-    } catch (error) {
-      console.log(error);
-    }
+
+    handleLogin({ email, password }).then((authorized) => {
+      if (authorized) {
+        history.push("/");
+      }
+    });
   };
   return (
     <CardForm
