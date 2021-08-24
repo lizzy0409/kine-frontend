@@ -1,20 +1,16 @@
 import React, { InputHTMLAttributes } from "react";
 import InputSearch from "../InputSearch";
+import { InputSearchProps } from "../InputSearch";
 
 import { InputContainer, Label, InputStyled } from "./styles";
-
-interface Teste {
-  inputValue?: string;
-  name: string;
-}
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
   inputSearch?: boolean;
-  data?: Teste[];
+  data?: InputSearchProps[];
   noAddOption?: boolean;
-  inputSearchValue?: Teste | null;
-  setValue?: React.Dispatch<React.SetStateAction<Teste | null>>;
+  inputSearchValue?: InputSearchProps | null;
+  setValue?: React.Dispatch<React.SetStateAction<InputSearchProps | null>>;
   disabled?: boolean;
 }
 

@@ -6,17 +6,18 @@ import Autocomplete, {
 
 import { InputStyled } from "./styles";
 
-const filter = createFilterOptions<Teste>();
+const filter = createFilterOptions<InputSearchProps>();
 
-interface Teste {
+export interface InputSearchProps {
+  id?: string;
   inputValue?: string;
   name: string;
 }
 
 interface InputSeach extends InputHTMLAttributes<HTMLInputElement> {
-  data: Teste[];
-  inputSearchValue: Teste | null;
-  setValue: React.Dispatch<React.SetStateAction<Teste | null>>;
+  data: InputSearchProps[];
+  inputSearchValue: InputSearchProps | null;
+  setValue: React.Dispatch<React.SetStateAction<InputSearchProps | null>>;
   noAddOption?: boolean;
   disabled?: boolean;
 }

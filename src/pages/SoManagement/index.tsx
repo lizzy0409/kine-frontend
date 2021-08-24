@@ -6,6 +6,8 @@ import TableCell from "@material-ui/core/TableCell";
 
 import HeaderPage from "../../components/Header";
 
+import { InputSearchProps } from "../../components/InputSearch";
+
 import {
   Container,
   InputLine,
@@ -64,11 +66,7 @@ interface MaterialsProps {
   name: string;
   quantity: number;
   value: number;
-}
-
-interface Teste {
-  inputValue?: string;
-  name: string;
+  totalCost: number;
 }
 
 const SoManagement = () => {
@@ -86,17 +84,17 @@ const SoManagement = () => {
 
   const [products, setProducts] = useState<ProductProps[]>([]);
 
-  const [client, setClient] = useState<Teste | null>(null);
-  const [clients, setClients] = useState<Teste[]>([]);
+  const [client, setClient] = useState<InputSearchProps | null>(null);
+  const [clients, setClients] = useState<InputSearchProps[]>([]);
 
-  const [seller, setSeller] = useState<Teste | null>(null);
-  const [sellers, setSellers] = useState<Teste[]>([]);
+  const [seller, setSeller] = useState<InputSearchProps | null>(null);
+  const [sellers, setSellers] = useState<InputSearchProps[]>([]);
 
   const [responsibleTechnician, setResponsibleTechnician] =
-    useState<Teste | null>(null);
-  const [responsibleTechnicians, setResponsibleTechnicians] = useState<Teste[]>(
-    []
-  );
+    useState<InputSearchProps | null>(null);
+  const [responsibleTechnicians, setResponsibleTechnicians] = useState<
+    InputSearchProps[]
+  >([]);
 
   const [closeAndSeeDetails, setCloseAndSeeDetails] = useState(false);
 
@@ -114,7 +112,7 @@ const SoManagement = () => {
   const [openOsDetailsModal, setOpenOsDetailsModal] = useState(false);
 
   const [SONumber, setSONumber] = useState<string>("");
-  const [product, setProduct] = useState<Teste | null>(null);
+  const [product, setProduct] = useState<InputSearchProps | null>(null);
   const [quantity, setQuantity] = useState(0);
   const [manpower, setManpower] = useState(0);
   const [displacement, setDisplacement] = useState(0);
@@ -123,8 +121,10 @@ const SoManagement = () => {
 
   const [materials, setMaterials] = useState<MaterialsProps[]>([]);
 
-  const [materialsInStock, setMaterialsInStock] = useState<Teste[]>([]);
-  const [materialsInSO, setMaterialsInSO] = useState<Teste[]>([]);
+  const [materialsInStock, setMaterialsInStock] = useState<InputSearchProps[]>(
+    []
+  );
+  const [materialsInSO, setMaterialsInSO] = useState<InputSearchProps[]>([]);
 
   const [addMaterialAndClose, setAddMaterialAndClose] = useState(false);
 
@@ -138,27 +138,38 @@ const SoManagement = () => {
     setQuantity(0);
   }
 
-  function handleServiceOrderRegistration(e: FormEvent) {
+  async function handleServiceOrderRegistration(e: FormEvent) {
     e.preventDefault();
+    console.log("\n\n\nLegal: ", materials);
+
+    const { data: clients } = await api.post("/clients", {
+      name: client?.name || "",
+    });
+    const { data: sellers } = await api.post("/sellers", {
+      name: seller?.name || "",
+    });
+    const { data: technicians } = await api.post("/technicians", {
+      name: responsibleTechnician?.name || "",
+    });
     const so = {
-      SONumber,
-      client: client?.name || "",
-      seller: seller?.name || "",
-      responsibleTechnician: responsibleTechnician?.name || "",
-      costOfSO: "2000",
+      number: SONumber,
       running: true,
       completed: false,
       closed: false,
-      openingDate: new Date(),
-      closingDate: new Date(),
-      materials: materials.map((data) => ({ ...data, id: undefined })),
+      man_power_cost: null,
+      displacement_cost: null,
+      materials: materials.map((data) => ({
+        name: data.name,
+        qty: data.quantity,
+        unit_cost: data.value,
+        total_cost: data.totalCost,
+      })),
+      clientId: clients.id,
+      sellerId: sellers.id,
+      technicianId: technicians.id,
     };
 
-    api.post("/so", so);
-
-    api.post("/clients", { name: so.client });
-    api.post("/sellers", { name: so.seller });
-    api.post("/technicians", { name: so.responsibleTechnician });
+    api.post("/serviceOrders", so);
 
     setOpenServiceOrderRegistrationModal(false);
     getSO();
@@ -216,17 +227,32 @@ const SoManagement = () => {
 
   async function handleAddMaterialToAnSoModal(e: FormEvent) {
     e.preventDefault();
+    console.log("oieeee");
+    setMaterials((data) => {
+      return data.map((material) => {
+        const totalCost = Number(material.value) * Number(material.quantity);
+        return { ...material, totalCost };
+      });
+    });
+
     if (modalAddEditableMaterial) {
       try {
-        const { data: so } = await api.get(`/so?SONumber=${SONumber}`);
+        const { data: so } = await api.get(
+          `/serviceOrders?SONumber=${SONumber}`
+        );
         const { data: productData } = await api.get(
           `/products?name=${product!.name}`
         );
 
-        await api.patch(`so/${so[0].id}`, {
+        await api.patch(`serviceOrders/${so[0].id}`, {
           materials: [
             ...so[0].materials,
-            { name: product!.name, quantity, value: productData[0].value },
+            {
+              name: product!.name,
+              qty: quantity,
+              value: productData[0].value,
+              total_cost: quantity * productData[0].value,
+            },
           ],
         });
         if (addMaterialAndClose) {
@@ -252,6 +278,7 @@ const SoManagement = () => {
               name: product!.name,
               quantity,
               value: data[0].value,
+              totalCost: data[0].value * quantity,
             },
           ]);
           setOpenAddMaterialToAnSoModal(false);
@@ -263,6 +290,7 @@ const SoManagement = () => {
               name: product!.name,
               quantity,
               value: data[0].value,
+              totalCost: data[0].value * quantity,
             },
           ]);
           setProduct(null);
@@ -280,7 +308,7 @@ const SoManagement = () => {
     try {
       const { data } = await api.get<ProductProps[]>("/products");
 
-      let parsedData: Teste[] = [];
+      let parsedData: InputSearchProps[] = [];
 
       data.forEach((product) => {
         parsedData.push({ name: product.name });
@@ -395,6 +423,7 @@ const SoManagement = () => {
             value: item.value,
             name: material.name,
             quantity: material.quantity,
+            totalCost: material.quantity * item.value,
           };
         }
         return item;
@@ -422,6 +451,7 @@ const SoManagement = () => {
         name: product?.name || "",
         value: data[0].value,
         quantity,
+        totalCost: data[0].value * quantity,
       };
       editProduct(material);
       setOpenEditModal(false);
@@ -445,6 +475,10 @@ const SoManagement = () => {
       clearInputs();
     }
   }, [openServiceOrderRegistrationModal]);
+
+  /*useEffect(() => {
+    
+  }, [materials]);*/
 
   return (
     <>
@@ -557,6 +591,7 @@ const SoManagement = () => {
                         columns={[
                           { name: "Material" },
                           { name: "Quantidade" },
+                          { name: "Valor Total" },
                           { name: "Ações" },
                         ]}
                       >
@@ -567,6 +602,9 @@ const SoManagement = () => {
                             </TableCell>
                             <TableCell align="left">
                               {material.quantity}
+                            </TableCell>
+                            <TableCell align="left">
+                              {material.totalCost}
                             </TableCell>
                             <TableCell align="right">
                               <ButtonEdit
