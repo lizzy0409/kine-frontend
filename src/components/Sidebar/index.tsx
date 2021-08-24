@@ -223,9 +223,7 @@ const Sidebar: React.FC = () => {
       const { data: sellers } = await api.get("/sellers");
       setSellers(sellers);
 
-      const { data: responsibleTechnicians } = await api.get(
-        "/responsibleTechnicians"
-      );
+      const { data: responsibleTechnicians } = await api.get("/technicians");
       setResponsibleTechnicians(responsibleTechnicians);
     } catch (error) {
       console.log(error);
@@ -260,7 +258,7 @@ const Sidebar: React.FC = () => {
 
     api.post("/clients", { name: so.client });
     api.post("/sellers", { name: so.seller });
-    api.post("/responsibleTechnicians", { name: so.responsibleTechnician });
+    api.post("/technicians", { name: so.responsibleTechnician });
 
     setOpenServiceOrderRegistrationModal(false);
     getInputSearchResults();
