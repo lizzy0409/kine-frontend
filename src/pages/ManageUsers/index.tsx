@@ -10,8 +10,8 @@ interface IUser {
   id: string;
   name: string;
   email: string;
-  awaitingApproval: boolean;
-  disapproved: boolean;
+  allow_access: boolean;
+  status: "APROVADO" | "toEvaluate" | "REPROVADO" | "DELETADO";
 }
 
 const ManageUsers: React.FC = () => {
@@ -28,16 +28,30 @@ const ManageUsers: React.FC = () => {
 
       let usersAwaitingApprovalTemp: IUser[] = [];
       let registeredUsersTemp: IUser[] = [];
+      let disapprovedUsersTemp: IUser[] = [];
+      let deletedUsersTemp: IUser[] = [];
 
       data.forEach((user: IUser) => {
-        if (!user.disapproved) {
-          if (user.awaitingApproval) {
-            usersAwaitingApprovalTemp.push(user);
-          } else {
+        console.log(user.allow_access);
+        if (user.allow_access) {
+          console.log("Entrou?");
+          if (user.status === "APROVADO") {
             registeredUsersTemp.push(user);
+          }
+        } else {
+          if (user.status === "toEvaluate") {
+            usersAwaitingApprovalTemp.push(user);
+          }
+          if (user.status === "REPROVADO") {
+            usersAwaitingApprovalTemp.push(user);
+          }
+          if (user.status === "DELETADO") {
+            usersAwaitingApprovalTemp.push(user);
           }
         }
       });
+      console.log("\nwaiting:", usersAwaitingApprovalTemp);
+      console.log("\nregis:", registeredUsersTemp);
       setUsersAwaitingApproval(usersAwaitingApprovalTemp);
       setRegisteredUsers(registeredUsersTemp);
     } catch (error) {}
@@ -63,7 +77,7 @@ const ManageUsers: React.FC = () => {
         </Section>
 
         <Section>
-          <Title>Usuários Cadastrados:</Title>
+          <Title>Usuários Aprovados:</Title>
           <Table
             users={registeredUsers}
             setUsersAwaitingApproval={setUsersAwaitingApproval}

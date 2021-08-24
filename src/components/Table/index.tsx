@@ -15,8 +15,8 @@ interface IUser {
   id: string;
   name: string;
   email: string;
-  awaitingApproval: boolean;
-  disapproved: boolean;
+  allow_access: boolean;
+  status: "APROVADO" | "toEvaluate" | "REPROVADO" | "DELETADO";
 }
 
 interface IMyTable {
@@ -33,7 +33,7 @@ const MyTable: React.FC<IMyTable> = ({
   usersTableAwaitingApproval,
 }) => {
   async function approveUser(id: string) {
-    api.patch(`/users/${id}`, { awaitingApproval: false });
+    api.patch(`/users/${id}`, { allow_access: true });
 
     setUsersAwaitingApproval((data) =>
       data.filter((user: IUser) => {
@@ -43,13 +43,13 @@ const MyTable: React.FC<IMyTable> = ({
 
     const { data } = await api.get(`users/${id}`);
     const user: IUser = data;
-    user.awaitingApproval = false;
+    user.allow_access = true;
     setRegisteredUsers((data) => [...data, user]);
   }
 
   async function disapproveUser(id: string) {
     await api.patch(`/users/${id}`, {
-      awaitingApproval: false,
+      allow_access: false,
       disapproved: true,
     });
 
@@ -76,6 +76,7 @@ const MyTable: React.FC<IMyTable> = ({
   }
   return (
     <TableContainer component={Paper} style={{ marginTop: 30 }}>
+      {console.log(users)}
       <Table style={{ minWidth: 650 }} size="small" aria-label="a dense table">
         <TableHead>
           <TableRow>
@@ -86,9 +87,7 @@ const MyTable: React.FC<IMyTable> = ({
               <p style={{ fontWeight: 600, fontSize: 15 }}>Email</p>
             </TableCell>
             <TableCell width="200px" align="left">
-              <p style={{ fontWeight: 600, fontSize: 15 }}>
-                Acesso á Plataforma
-              </p>
+              <p style={{ fontWeight: 600, fontSize: 15 }}>Status</p>
             </TableCell>
             <TableCell width="200px" align="right">
               <p style={{ fontWeight: 600, fontSize: 15 }}>Ações</p>
@@ -103,7 +102,7 @@ const MyTable: React.FC<IMyTable> = ({
               </TableCell>
               <TableCell align="left">{user.email}</TableCell>
               <TableCell width="300px" align="left">
-                {user.awaitingApproval ? "Aguardadando aprovação" : "Aprovado"}
+                {user.allow_access ? "Aprovado" : "Aguardadando aprovação"}
               </TableCell>
               <TableCell
                 width="200px"
