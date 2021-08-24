@@ -12,11 +12,15 @@ import {
   ButtonsContainer,
 } from "./styles";
 
+import styled from "styled-components";
+
+import { IoCloseSharp } from "react-icons/io5";
+
 interface ProductProps {
   name: string;
   value: number;
   quantity: number;
-  unitOfMeasure: string;
+  measureUnit: string;
   costCenter: string;
 }
 
@@ -31,7 +35,7 @@ const Modal: React.FC<ModalProps> = ({ setOpenModal, addProduct }) => {
   const [name, setName] = useState("");
   const [value, setValue] = useState<number>(0);
   const [quantity, setQuantity] = useState<number>(0);
-  const [unitOfMeasure, setUnitOfMeasure] = useState("");
+  const [measureUnit, setMeasureUnit] = useState("");
   const [costCenter, setCostCenter] = useState("");
 
   function handleSubmit(e: FormEvent) {
@@ -40,7 +44,7 @@ const Modal: React.FC<ModalProps> = ({ setOpenModal, addProduct }) => {
       name,
       value,
       quantity,
-      unitOfMeasure,
+      measureUnit,
       costCenter,
     };
     addProduct(product);
@@ -89,9 +93,9 @@ const Modal: React.FC<ModalProps> = ({ setOpenModal, addProduct }) => {
             <Input
               label="Unidade de Medida"
               placeholder="Selecione a quantidade"
-              value={unitOfMeasure}
+              value={measureUnit}
               onChange={(e) => {
-                setUnitOfMeasure(e.target.value);
+                setMeasureUnit(e.target.value);
               }}
             />
             <Input
@@ -125,10 +129,6 @@ const Modal: React.FC<ModalProps> = ({ setOpenModal, addProduct }) => {
 };
 
 export default Modal;
-
-import styled from "styled-components";
-
-import { IoCloseSharp } from "react-icons/io5";
 
 export const Wrapper = styled.div`
   position: absolute;

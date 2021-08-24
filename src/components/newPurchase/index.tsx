@@ -30,7 +30,7 @@ interface ProductProps {
   name: string;
   value: number | string;
   quantity: number;
-  unitOfMeasure: string;
+  measureUnit: string;
   costCenter: string;
 }
 
@@ -52,8 +52,8 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
   const [name, setName] = useState<Teste | null>(null);
   const [names, setNames] = useState<Teste[]>([]);
 
-  const [unitOfMeasure, setUnitOfMeasure] = useState<Teste | null>(null);
-  const [unitOfMeasures, setUnitOfMeasures] = useState<Teste[]>([]);
+  const [measureUnit, setMeasureUnit] = useState<Teste | null>(null);
+  const [measureUnits, setMeasureUnits] = useState<Teste[]>([]);
 
   const [costCenter, setCostCenter] = useState<Teste | null>(null);
   const [costCenters, setCostCenters] = useState<Teste[]>([]);
@@ -72,7 +72,7 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
     setName(null);
     setValue("");
     setQuantity(0);
-    setUnitOfMeasure(null);
+    setMeasureUnit(null);
     setCostCenter(null);
     setCostCenterDisabled(false);
   }
@@ -95,7 +95,7 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
             name: product.name,
             value: product.value,
             quantity: product.quantity,
-            unitOfMeasure: item.unitOfMeasure,
+            measureUnit: item.measureUnit,
             costCenter: item.costCenter,
           };
         }
@@ -118,7 +118,7 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
       name: name?.name || "",
       value,
       quantity,
-      unitOfMeasure: unitOfMeasure?.name || "",
+      measureUnit: measureUnit?.name || "",
       costCenter: costCenter?.name || "",
     };
     addProduct(product);
@@ -132,7 +132,7 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
       name: name?.name || "",
       value,
       quantity,
-      unitOfMeasure: unitOfMeasure?.name || "",
+      measureUnit: measureUnit?.name || "",
       costCenter: costCenter?.name || "",
     };
     editProduct(product);
@@ -161,7 +161,7 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
       products.forEach((product) => {
         api.post("/materials", { name: product.name });
         api.post("/costCenters", { name: product.costCenter });
-        api.post("/unitOfMeasures", { name: product.unitOfMeasure });
+        api.post("/measureUnits", { name: product.measureUnit });
       });
 
       alert("Compra feita com sucesso!");
@@ -194,8 +194,8 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
       });
       setNames(parsedData);
 
-      const { data: unitOfMeasures } = await api.get("/unitOfMeasures");
-      setUnitOfMeasures(unitOfMeasures);
+      const { data: measureUnits } = await api.get("/measureUnits");
+      setMeasureUnits(measureUnits);
 
       const { data: costCenters } = await api.get("/costCenters");
       setCostCenters(costCenters);
@@ -210,11 +210,11 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
     if (data.length) {
       setCostCenterDisabled(true);
       setCostCenter({ name: data[0].costCenter });
-      setUnitOfMeasure({ name: data[0].unitOfMeasure });
+      setMeasureUnit({ name: data[0].measureUnit });
     } else {
       setCostCenterDisabled(false);
       setCostCenter({ name: "" });
-      setUnitOfMeasure({ name: "" });
+      setMeasureUnit({ name: "" });
     }
   };
 
@@ -333,11 +333,11 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
             />
             <Input
               inputSearch
-              data={unitOfMeasures}
+              data={measureUnits}
               label="Unidade de Medida"
               placeholder="Selecione a quantidade"
-              inputSearchValue={unitOfMeasure}
-              setValue={setUnitOfMeasure}
+              inputSearchValue={measureUnit}
+              setValue={setMeasureUnit}
               disabled={costCenterDisabled}
             />
             <Input

@@ -55,7 +55,7 @@ interface ProductProps {
   name: string;
   value: number;
   quantity: number;
-  unitOfMeasure: string;
+  measureUnit: string;
   costCenter: string;
 }
 
