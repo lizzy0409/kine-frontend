@@ -38,7 +38,15 @@ const CurrentStockContent: React.FC<CurrentStockContentProps> = ({
     try {
       const { data } = await api.get("/products");
 
-      setProducts(data);
+      const dataParsed = data.map((product: any) => {
+        return {
+          name: product.name,
+          quantity: product.qty_ordered,
+          stockLimit: product.qty_stock_limit,
+        };
+      });
+
+      setProducts(dataParsed);
     } catch (error) {
       console.log(error);
     }

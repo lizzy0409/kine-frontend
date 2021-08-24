@@ -4,6 +4,8 @@ import Button from "../Button";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 
+import { InputSearchProps } from "../InputSearch";
+
 import Input from "../Input";
 
 import {
@@ -20,10 +22,6 @@ import api from "../../services/api";
 import randomId from "../../utils/randomId";
 import ButtonEdit from "../ButtonEdit";
 import ButtonRemoveProduct from "../ButtonRemoveProduct";
-interface Teste {
-  inputValue?: string;
-  name: string;
-}
 
 interface ProductProps {
   id: string;
@@ -46,17 +44,17 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
     preData ? [preData] : []
   );
 
-  const [supplier, setSupplier] = useState<Teste | null>(null);
-  const [suppliers, setSuppliers] = useState<Teste[]>([]);
+  const [supplier, setSupplier] = useState<InputSearchProps | null>(null);
+  const [suppliers, setSuppliers] = useState<InputSearchProps[]>([]);
 
-  const [name, setName] = useState<Teste | null>(null);
-  const [names, setNames] = useState<Teste[]>([]);
+  const [name, setName] = useState<InputSearchProps | null>(null);
+  const [names, setNames] = useState<InputSearchProps[]>([]);
 
-  const [measureUnit, setMeasureUnit] = useState<Teste | null>(null);
-  const [measureUnits, setMeasureUnits] = useState<Teste[]>([]);
+  const [measureUnit, setMeasureUnit] = useState<InputSearchProps | null>(null);
+  const [measureUnits, setMeasureUnits] = useState<InputSearchProps[]>([]);
 
-  const [costCenter, setCostCenter] = useState<Teste | null>(null);
-  const [costCenters, setCostCenters] = useState<Teste[]>([]);
+  const [costCenter, setCostCenter] = useState<InputSearchProps | null>(null);
+  const [costCenters, setCostCenters] = useState<InputSearchProps[]>([]);
 
   const [id, setId] = useState("");
   const [totalPurchaseAmount, setTotalPurchaseAmount] = useState<
@@ -106,7 +104,7 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
   function OpenEditModal(product: ProductProps) {
     setOpenEditModal(true);
     setId(product.id);
-    setName({ name: product.name });
+    setName({ id: product.id, name: product.name });
     setValue(product.value);
     setQuantity(product.quantity);
   }
@@ -143,25 +141,30 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
     e.preventDefault();
 
     try {
-      products.forEach((product) => {
+      const { data: suppliers } = await api.post("/suppliers", {
+        name: supplier?.name,
+      });
+      products.forEach(async (product) => {
+        const { data: costCenters } = await api.post("/costCenters", {
+          name: product.costCenter,
+        });
+        const { data: measureUnits } = await api.post("/measureUnits", {
+          name: product.measureUnit,
+        });
+
         api.post("/products", {
-          ...product,
-          stockLimit: product.quantity,
-          id: null,
+          name: product.name,
+          unit_cost: Number(product.value),
+          qty_ordered: product.quantity,
+          costCenterId: costCenters.id,
+          unitMeasureId: measureUnits.id,
+          lastSupplierId: suppliers.id,
         });
       });
       api.post("/purchases", {
         supplier: supplier?.name,
         totalPurchaseAmount,
         products,
-      });
-
-      api.post("/suppliers", { name: supplier?.name });
-
-      products.forEach((product) => {
-        api.post("/materials", { name: product.name });
-        api.post("/costCenters", { name: product.costCenter });
-        api.post("/measureUnits", { name: product.measureUnit });
       });
 
       alert("Compra feita com sucesso!");
@@ -184,13 +187,13 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
 
       const { data } = await api.get<ProductProps[]>("/products");
 
-      let parsedData: Teste[] = [];
+      let parsedData: InputSearchProps[] = [];
 
       /*const { data: materials } = await api.get("/materials");
       setNames(materials);*/
 
       data.forEach((product) => {
-        parsedData.push({ name: product.name });
+        parsedData.push({ id: product.id, name: product.name });
       });
       setNames(parsedData);
 
@@ -199,22 +202,31 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
 
       const { data: costCenters } = await api.get("/costCenters");
       setCostCenters(costCenters);
+      console.log(costCenters);
     } catch (error) {
       console.log(error);
     }
   }
 
   const getProductDetails = async () => {
-    const { data } = await api.get(`/products?name=${name?.name}`);
+    try {
+      const { data } = await api.get(`/products?name=${name?.name}`);
 
-    if (data.length) {
-      setCostCenterDisabled(true);
-      setCostCenter({ name: data[0].costCenter });
-      setMeasureUnit({ name: data[0].measureUnit });
-    } else {
-      setCostCenterDisabled(false);
-      setCostCenter({ name: "" });
-      setMeasureUnit({ name: "" });
+      if (data.length) {
+        setCostCenterDisabled(true);
+        setCostCenter({
+          id: data[0].cost_center.id,
+          name: data[0].cost_center.name,
+        });
+        setMeasureUnit({
+          id: data[0].measure_unit.id,
+          name: data[0].measure_unit.name,
+        });
+      } else {
+        setCostCenterDisabled(false);
+      }
+    } catch (error) {
+      console.log("\n\ngetProductDetails: ", error);
     }
   };
 
