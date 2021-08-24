@@ -134,7 +134,7 @@ const Sidebar: React.FC = () => {
     e.preventDefault();
     if (modalAddEditableMaterial) {
       try {
-        const { data: so } = await api.get(`/so?SONumber=${SONumber}`);
+        const { data: so } = await api.get(`/serviceOrders?number${SONumber}`);
         const { data: productData } = await api.get(
           `/products?name=${product!.name}`
         );
@@ -254,7 +254,7 @@ const Sidebar: React.FC = () => {
       materials,
     };
 
-    api.post("/so", so);
+    api.post("/serviceOrders", so);
 
     api.post("/clients", { name: so.client });
     api.post("/sellers", { name: so.seller });

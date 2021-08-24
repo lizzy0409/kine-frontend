@@ -123,7 +123,7 @@ const Home: React.FC = () => {
       materials,
     };
 
-    api.post("/so", so);
+    api.post("/serviceOrders", so);
 
     api.post("/clients", { name: so.client });
     api.post("/sellers", { name: so.seller });
@@ -138,7 +138,7 @@ const Home: React.FC = () => {
     e.preventDefault();
     if (modalAddEditableMaterial) {
       try {
-        const { data: so } = await api.get(`/so?SONumber=${SONumber}`);
+        const { data: so } = await api.get(`/serviceOrders?number${SONumber}`);
         const { data: productData } = await api.get(
           `/products?name=${product!.name}`
         );
@@ -243,7 +243,7 @@ const Home: React.FC = () => {
 
   async function getClient() {
     try {
-      const { data } = await api.get(`/so?SONumber=${SONumber}`);
+      const { data } = await api.get(`/serviceOrders?number${SONumber}`);
 
       setClient({ name: data[0] ? data[0].client : "Sem cliente" });
     } catch (error) {
@@ -614,7 +614,7 @@ const Home: React.FC = () => {
                 onBlur={async () => {
                   getClient();
                   try {
-                    const { data } = await api.get(`/so?SONumber=${SONumber}`);
+                    const { data } = await api.get(`/serviceOrders?number${SONumber}`);
                     setMaterialsInSO(data[0].materials);
                   } catch (error) {
                     console.log(error);

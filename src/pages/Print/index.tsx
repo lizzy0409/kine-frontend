@@ -57,7 +57,7 @@ const Print = () => {
 
   async function openOsDetails() {
     try {
-      const { data } = await api.get(`/so/${id}`);
+      const { data } = await api.get(`/serviceOrders/${id}`);
       setProducts(data.materials);
       setOpeningDate(data.openingDate);
       setClosingDate(data.closingDate);
