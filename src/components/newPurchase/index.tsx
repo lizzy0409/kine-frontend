@@ -101,6 +101,7 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
       })
     );
   }
+
   function OpenEditModal(product: ProductProps) {
     setOpenEditModal(true);
     setId(product.id);
@@ -152,22 +153,20 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
           name: product.measureUnit,
         });
 
-        api.post("/products", {
+        await api.post("/products", {
           name: product.name,
           unit_cost: Number(product.value),
           qty_ordered: product.quantity,
           costCenterId: costCenters.id,
           unitMeasureId: measureUnits.id,
           lastSupplierId: suppliers.id,
+          totalPurchaseAmount,
         });
       });
-      api.post("/purchases", {
-        supplier: supplier?.name,
-        totalPurchaseAmount,
-        products,
-      });
 
+      //TODO Está passando aqui antes de terminar o foreach
       alert("Compra feita com sucesso!");
+      //TODO Verificar com o Heitor o que é isso:
       changeValue(0);
     } catch (error) {
       console.log(error);
@@ -206,7 +205,10 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
 
   const getProductDetails = async () => {
     try {
+      console.log("\n\ngetProductDetails");
       const { data } = await api.get(`/products?name=${name?.name}`);
+      console.log(data.length);
+      console.log(data);
 
       if (data.length) {
         setCostCenterDisabled(true);
