@@ -53,7 +53,6 @@ function TabPanel(props: TabPanelProps) {
 
 export default function SimpleTabs() {
   const { open, activePage } = useContext(SideBarContext);
-  console.log(activePage);
 
   const [value, setValue] = React.useState(activePage === 2 ? 1 : 0);
   const [preData, setPreData] = React.useState<ProductProps>();

@@ -189,9 +189,6 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
 
       let parsedData: InputSearchProps[] = [];
 
-      /*const { data: materials } = await api.get("/materials");
-      setNames(materials);*/
-
       data.forEach((product) => {
         parsedData.push({ id: product.id, name: product.name });
       });
@@ -202,7 +199,6 @@ const NewPurchase: React.FC<NewPurchaseProps> = ({ changeValue, preData }) => {
 
       const { data: costCenters } = await api.get("/costCenters");
       setCostCenters(costCenters);
-      console.log(costCenters);
     } catch (error) {
       console.log(error);
     }
