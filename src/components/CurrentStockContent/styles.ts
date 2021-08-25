@@ -7,7 +7,7 @@ interface GraphProps {
 export const Container = styled.div`
   overflow-y: auto;
   max-height: calc((100vh - 100px) - 77px);
-  padding: 24px;
+  padding: 8px 24px;
 
   @media (max-width: 550px) {
     padding: 0;
@@ -16,6 +16,21 @@ export const Container = styled.div`
 `;
 export const ProductsTable = styled.div``;
 export const Product = styled.div`
+  display: grid;
+  align-items: center;
+  text-align: center;
+  font-weight: 500;
+  grid-template-columns: 70px 1fr 2fr 1fr;
+  grid-template-rows: 50px;
+
+  border-bottom: 2px solid #9eadba;
+  padding: 10px;
+
+  @media (max-width: 550px) {
+    grid-template-columns: 40px 1fr 2fr 1fr;
+  }
+`;
+export const TableHeader = styled.div`
   display: grid;
   align-items: center;
   text-align: center;

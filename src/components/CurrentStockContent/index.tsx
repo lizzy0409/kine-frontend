@@ -11,6 +11,7 @@ import {
   GraphContent,
   RightContainer,
   StockSize,
+  TableHeader,
 } from "./styles";
 
 interface ProductProps {
@@ -41,8 +42,8 @@ const CurrentStockContent: React.FC<CurrentStockContentProps> = ({
       const dataParsed = data.map((product: any) => {
         return {
           name: product.name,
-          quantity: product.qty_ordered,
-          stockLimit: product.qty_stock_limit,
+          quantity: product.qty_stocked,
+          stockLimit: product.max_stock_limit,
         };
       });
 
@@ -63,6 +64,12 @@ const CurrentStockContent: React.FC<CurrentStockContentProps> = ({
   return (
     <Container>
       <ProductsTable>
+        <TableHeader>
+          <Number>Numero</Number>
+          <Name>Nome do Produto</Name>
+          <Name>Estado do Estoque</Name>
+          <RightContainer>Quantidade em Estoque</RightContainer>
+        </TableHeader>
         {products &&
           products.map((product, index) => (
             <Product>
@@ -74,21 +81,7 @@ const CurrentStockContent: React.FC<CurrentStockContentProps> = ({
                 />
               </GraphContainer>
               <RightContainer>
-                {/*<Button
-                  onClick={() => {
-                    setPreData(product);
-                    changeValue(1);
-                  }}
-                  disable={
-                    getPercent(product.quantity, product.stockLimit) >= 85
-                  }
-                  color={"#6558f5"}
-                >
-                  Comprar
-                </Button>*/}
-                <StockSize>
-                  {product.quantity}/{product.stockLimit}
-                </StockSize>
+                <StockSize>{product.quantity}</StockSize>
               </RightContainer>
             </Product>
           ))}
